@@ -1,14 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+    <!--<fragment xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--xmlns:tools="http://schemas.android.com/tools"-->
+    <!--android:id="@+id/main_branch_map"-->
+    <!--android:name="com.google.android.gms.maps.SupportMapFragment"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--tools:context="com.crepetete.transittracker.activities.main.MainActivity" />-->
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main_branch_map"
-        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:id="@+id/fragment_cardstream"
+        android:name="com.crepetete.transittracker.activities.main.fragments.map.cardstream.CardStreamFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context="com.crepetete.transittracker.activities.main.MainActivity" />
+        tools:context=".MainActivity"
+        tools:layout="@layout/card_stream" />
 </android.support.constraint.ConstraintLayout>
