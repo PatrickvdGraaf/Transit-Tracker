@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.crepetete.transittracker.views.fragments.map.cardstream.CardLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.crepetete.transittracker.views.fragments.map.cardstream.CardActionButton
+        android:id="@+id/card_button"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/list_item_height"
+        android:background="@android:color/transparent"
+        android:drawablePadding="@dimen/spacing_normal"
+        android:drawableStart="@drawable/ic_add_circle"
+        android:gravity="center|start"
+        android:paddingEnd="@dimen/spacing_normal"
+        android:paddingStart="@dimen/spacing_normal"
+        android:text="@string/pick_title"
+        android:textColor="@color/picker_color"
+        android:textStyle="bold" />
+
+</com.crepetete.transittracker.views.fragments.map.cardstream.CardLayout>

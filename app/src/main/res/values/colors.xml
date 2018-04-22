@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!--App-->
-    <color name="colorPrimary">#ffd600</color>
-    <color name="colorPrimaryDark">#c7a500</color>
-    <color name="colorAccent">#4527a0</color>
+    <color name="colorPrimary">#2e7d32</color>
+    <color name="colorPrimaryDark">#005005</color>
+    <color name="colorPrimaryLight">#60ad5e</color>
+    <color name="colorAccent">#fff</color>
+    <color name="colorGray">#555</color>
+    <color name="background">#e3e3e3</color>
 
     <!--Card-->
     <color name="card_action_inverted">@android:color/white</color>
 
     <color name="card_content_textcolor">#444</color>
 
-    <color name="card_action_bg">#DDD</color>
+    <color name="card_action_bg">@android:color/transparent</color>
     <color name="card_action_item_bg">#F4F4F4</color>
 
     <!-- Neutral Actions -->
@@ -27,4 +30,5 @@
     <color name="card_action_positive_focused">#FFE4F0AF</color>
     <color name="card_action_positive">#FFA0CC00</color>
     <color name="card_action_positive_ripple">#CCA0CC00</color>
+    <color name="picker_color">#7B7B7B</color>
 </resources>

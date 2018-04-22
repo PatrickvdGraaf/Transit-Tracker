@@ -2,8 +2,8 @@
 <fragment xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/fragment_cardstream"
-    android:name="com.crepetete.transittracker.activities.main.fragments.map.cardstream.CardStreamFragment"
+    android:name="com.crepetete.transittracker.views.fragments.map.cardstream.CardStreamFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.main.PlacesActivity"
+    tools:context=".views.activities.main.PlacesActivity"
     tools:layout="@layout/card_stream" />

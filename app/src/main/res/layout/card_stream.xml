@@ -4,9 +4,9 @@
     android:layout_height="match_parent"
     android:fillViewport="true">
 
-    <com.crepetete.transittracker.activities.main.fragments.map.cardstream.CardStreamLinearLayout
+    <com.crepetete.transittracker.views.fragments.map.cardstream.CardStreamLinearLayout
         android:id="@+id/card_stream"
         style="@style/CardStream"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"/>
 </ScrollView>

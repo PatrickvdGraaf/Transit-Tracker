@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.crepetete.transittracker.activities.main.fragments.map.cardstream.CardActionButton
+<com.crepetete.transittracker.views.fragments.map.cardstream.CardActionButton
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/card_button"
     style="@style/CardActionPositive"
@@ -7,4 +7,4 @@
     android:layout_height="wrap_content"
     android:gravity="center_vertical">
 
-</com.crepetete.transittracker.activities.main.fragments.map.cardstream.CardActionButton>
+</com.crepetete.transittracker.views.fragments.map.cardstream.CardActionButton>
