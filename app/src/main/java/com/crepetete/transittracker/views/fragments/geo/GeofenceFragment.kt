@@ -13,6 +13,7 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.SystemClock
@@ -20,12 +21,14 @@ import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
+import android.support.v4.content.ContextCompat.startForegroundService
 import android.support.v4.graphics.ColorUtils
 import android.view.animation.BounceInterpolator
 import android.widget.Toast
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.config.Constants
-import com.crepetete.transittracker.intent.GeofenceBroadCastReceiver
+import com.crepetete.transittracker.intent.broadcast.GeofenceBroadCastReceiver
+import com.crepetete.transittracker.intent.service.GeofenceService
 import com.crepetete.transittracker.models.place.ParcelablePlace
 import com.crepetete.transittracker.models.place.PlacesController
 import com.google.android.gms.common.ConnectionResult
@@ -76,7 +79,7 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
 
     private val mRequestPermissionsRequestCode = 34
 
-    private var lastLocation: Location? = null
+    private var mLastLocation: Location? = null
 
     private val mHashMap: HashMap<Marker, ParcelablePlace> = hashMapOf()
 
@@ -97,6 +100,13 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        val service = Intent(context, GeofenceService::class.java)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForegroundService(context!!, service)
+        } else {
+            activity!!.startService(service)
+        }
+
         val manager = context?.getSystemService(Context.LOCATION_SERVICE)
                 as LocationManager
         if (!manager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -113,7 +123,7 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
         mGeofencesAdded = mSharedPreferences?.getBoolean(Constants.GEOFENCES_ADDED_KEY,
                 false)!!
 
-        // Kick off the request to build GoogleApiClient.
+        // Kick off the request to getBuilder GoogleApiClient.
         createGoogleApi()
 
         getLastKnownLocation()
@@ -311,7 +321,7 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
         if (checkPermissions()) {
             context?.let {
                 mFusedLocationClient.lastLocation?.addOnSuccessListener {
-                    lastLocation = it
+                    mLastLocation = it
                 }
             }
             startLocationUpdates()
@@ -431,8 +441,8 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
                 builder.include(marker.position)
             }
 
-            if (lastLocation != null) {
-                builder.include(LatLng(lastLocation!!.latitude, lastLocation!!.longitude))
+            if (mLastLocation != null) {
+                builder.include(LatLng(mLastLocation!!.latitude, mLastLocation!!.longitude))
             }
 
             val cameraUpdate = CameraUpdateFactory

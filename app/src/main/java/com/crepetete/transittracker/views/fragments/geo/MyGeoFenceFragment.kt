@@ -1,13 +1,11 @@
 package com.crepetete.transittracker.views.fragments.geo
 
 
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.crepetete.transittracker.R
-import com.crepetete.transittracker.intent.GeofenceBroadCastReceiver
 import com.crepetete.transittracker.models.place.PlacesListener
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -24,8 +22,6 @@ class MyGeoFenceFragment : PlacesListener, GeofenceFragment(), OnMapReadyCallbac
         }
     }
 
-    private val mReceiver = GeofenceBroadCastReceiver()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
@@ -34,19 +30,6 @@ class MyGeoFenceFragment : PlacesListener, GeofenceFragment(), OnMapReadyCallbac
                 childFragmentManager.findFragmentById(R.id.main_branch_map) as SupportMapFragment
         mapFragment.getMapAsync(this)
         return v
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        activity!!.registerReceiver(mReceiver,
-                IntentFilter(GeofenceBroadCastReceiver.GEOFENCE_ACTION))
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-        activity!!.unregisterReceiver(mReceiver)
     }
 
     override fun getListenerTag(): String {

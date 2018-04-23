@@ -9,11 +9,18 @@ class TransitionTrackerApp : Application() {
     override fun onCreate() {
         super.onCreate()
 
-        if(BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) {
             Timber.plant(Timber.DebugTree())
         } else {
             Timber.plant(CrashReportingTree())
         }
+
+//        val service = Intent(applicationContext, GeofenceService::class.java)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+//            startForegroundService(service)
+//        } else {
+//            startService(service)
+//        }
     }
 }
 
@@ -24,8 +31,8 @@ private class CrashReportingTree : Timber.Tree() {
             return
         }
 
-        if(t != null) {
-            if (priority == Log.ERROR){
+        if (t != null) {
+            if (priority == Log.ERROR) {
                 CrashReportingLibrary.logError(t)
             } else if (priority == Log.WARN) {
                 CrashReportingLibrary.logWarning(t)

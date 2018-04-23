@@ -9,17 +9,35 @@ import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.place.PlacesListener
 import com.crepetete.transittracker.models.place.adapter.viewholder.PlaceViewHolder
 import com.crepetete.transittracker.views.fragments.place.PlacePickerFragment
+import com.google.android.gms.location.places.GeoDataClient
+import com.google.android.gms.location.places.Places
+
 
 class PlacesAdapter : PlacesListener, RecyclerView.Adapter<PlaceViewHolder>() {
     private val mPlaces: List<ParcelablePlace> = PlacesController.getPlaces()
+    private var mGeoDataClient: GeoDataClient? = null
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        if (mGeoDataClient != null) {
+            mGeoDataClient = null
+        }
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
+        if (mGeoDataClient == null) {
+            mGeoDataClient = Places.getGeoDataClient(parent.context)
+        }
+
         return PlaceViewHolder(LayoutInflater.from(parent.context)
                 .inflate(R.layout.card_place, parent, false))
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
-        holder.setPlace(mPlaces.get(position))
+        holder.setPlace(mPlaces[position])
+        if (mGeoDataClient != null) {
+            holder.setImage(mGeoDataClient)
+        }
     }
 
     override fun getItemCount(): Int {

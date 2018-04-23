@@ -12,6 +12,8 @@ import android.support.v4.app.FragmentManager
 import android.widget.Toast
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.config.AnimationHelper
+import com.crepetete.transittracker.config.bind
+import com.crepetete.transittracker.intent.service.GeofenceService
 import com.crepetete.transittracker.models.place.ParcelablePlace
 import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.view.PlacesFabAnimator
@@ -86,35 +88,13 @@ class MainActivity : FragmentActivity() {
                 return@OnNavigationItemSelectedListener true
             }
 
-    private lateinit var mFabAdd: FloatingActionButton
-    private lateinit var mFabStart: FloatingActionButton
+    private val mFabAdd by bind<FloatingActionButton>(R.id.fab_add)
+    private val mFabStart by bind<FloatingActionButton>(R.id.fab_start)
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        mFabAdd = findViewById(R.id.fab_add)
-        mFabStart = findViewById(R.id.fab_start)
-        mFabAnimator = PlacesFabAnimator(this, arrayOf(mFabAdd, mFabStart), coordinator,
-                navigation)
-
-        mFabAdd.setOnClickListener({
-            // Open PlacePicker Intent.
-            try {
-                val intentBuilder = PlacePicker.IntentBuilder()
-                val intent = intentBuilder.build(this)
-                // Start the Intent by requesting a result, identified by a request code.
-                startActivityForResult(intent, REQUEST_PLACE_PICKER)
-            } catch (e: GooglePlayServicesRepairableException) {
-                GoogleApiAvailability.getInstance().getErrorDialog(this,
-                        e.connectionStatusCode, 0)
-            } catch (e: GooglePlayServicesNotAvailableException) {
-                Toast.makeText(this, "Google Play Services is not available",
-                        Toast.LENGTH_SHORT).show()
-            }
-        })
-
-        mFabAnimator.showInitialFab()
 
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         mOnNavigationItemSelectedListener.onNavigationItemSelected(navigation.menu.getItem(1))
@@ -126,17 +106,44 @@ class MainActivity : FragmentActivity() {
         setFabVisibility()
     }
 
-    override fun onDestroy() {
-        mFabAnimator.removeListener()
-        super.onDestroy()
+    override fun onStart() {
+        super.onStart()
+        mFabAnimator = PlacesFabAnimator(this, arrayOf(mFabAdd, mFabStart), coordinator,
+                navigation)
+        mFabAnimator.showInitialFab()
+
+        mFabAdd.setOnClickListener({
+            openPlacePickerIntent()
+        })
     }
 
+    override fun onDestroy() {
+        mFabAnimator.removeListener()
+        stopService(Intent(this, GeofenceService::class.java))
+        super.onDestroy()
+    }
 
     private fun setFabVisibility() {
         if (PlacesController.getNumberOfPlaces() == 0) {
             mFabAnimator.hideSecondFab()
         } else {
             mFabAnimator.showSecondFab()
+        }
+    }
+
+    private fun openPlacePickerIntent() {
+        // Open PlacePicker Intent.
+        try {
+            val intentBuilder = PlacePicker.IntentBuilder()
+            val intent = intentBuilder.build(this)
+            // Start the Intent by requesting a result, identified by a request code.
+            startActivityForResult(intent, REQUEST_PLACE_PICKER)
+        } catch (e: GooglePlayServicesRepairableException) {
+            GoogleApiAvailability.getInstance().getErrorDialog(this,
+                    e.connectionStatusCode, 0)
+        } catch (e: GooglePlayServicesNotAvailableException) {
+            Toast.makeText(this, "Google Play Services is not available",
+                    Toast.LENGTH_SHORT).show()
         }
     }
 

@@ -1,6 +1,7 @@
 package com.crepetete.transittracker.models.place
 
 import android.annotation.SuppressLint
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Parcel
 import android.os.Parcelable
@@ -21,16 +22,15 @@ class ParcelablePlace @SuppressLint("ValidFragment") private constructor(
         private val website: Uri?,
         private val attributions: String) : Parcelable {
 
-    companion object {
-        @JvmField
-        val CREATOR = object : Parcelable.Creator<ParcelablePlace> {
-            override fun createFromParcel(parcel: Parcel): ParcelablePlace {
-                return ParcelablePlace(parcel)
-            }
+    private lateinit var mPhotoResult: Bitmap
 
-            override fun newArray(size: Int): Array<ParcelablePlace?> {
-                return arrayOfNulls(size)
-            }
+    companion object CREATOR : Parcelable.Creator<ParcelablePlace> {
+        override fun createFromParcel(parcel: Parcel): ParcelablePlace {
+            return ParcelablePlace(parcel)
+        }
+
+        override fun newArray(size: Int): Array<ParcelablePlace?> {
+            return arrayOfNulls(size)
         }
 
         fun fromPlace(place: Place): ParcelablePlace {
@@ -48,6 +48,7 @@ class ParcelablePlace @SuppressLint("ValidFragment") private constructor(
             if (attr == null) {
                 attr = ""
             }
+
             return ParcelablePlace(place.id, place.address.toString(), locale,
                     place.name.toString(), place.latLng, place.viewport, uri,
                     attr.toString())

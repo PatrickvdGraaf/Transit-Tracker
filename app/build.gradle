@@ -50,6 +50,9 @@ dependencies {
     implementation "com.github.bumptech.glide:glide:$GLIDE_VERSION"
     annotationProcessor "com.github.bumptech.glide:compiler:$GLIDE_VERSION"
 
+    // Parallax ImageView
+    implementation 'com.gjiazhe:scrollparallaximageview:1.0'
+
 //    Logging
     implementation 'com.jakewharton.timber:timber:4.7.0'
 //    Test

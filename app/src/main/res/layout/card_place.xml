@@ -18,11 +18,22 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <com.gjiazhe.scrollparallaximageview.ScrollParallaxImageView
+                android:id="@+id/banner"
+                android:layout_width="match_parent"
+                android:layout_height="144dp"
+                android:background="#eee"
+                android:contentDescription="Place Banner"
+                android:scaleType="centerCrop"
+                android:visibility="visible" />
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingStart="@dimen/spacing_normal"
+                android:paddingEnd="@dimen/spacing_normal"
+                android:paddingTop="@dimen/spacing_normal">
 
                 <TextView
                     android:id="@+id/title"
