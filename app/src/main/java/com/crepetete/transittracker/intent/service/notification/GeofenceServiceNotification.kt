@@ -1,7 +1,6 @@
 package com.crepetete.transittracker.intent.service.notification
 
 import android.annotation.SuppressLint
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -75,13 +74,8 @@ class GeofenceServiceNotification(context: Context) : GeofenceNotification(conte
 //                removeIntent, 0)
 
         // Define the notification settings
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(mContext, mChannelId).setChannelId(mChannelId)
-        } else {
-            Notification.Builder(mContext)
-        }
-
-        builder.setSmallIcon(R.drawable.ic_notif_transit)
+        return super.getBuilder(notificationManager)
+                .setSmallIcon(R.drawable.ic_notif_transit)
 //                .setLargeIcon()
                 .setColor(ContextCompat.getColor(mContext, R.color.colorAccent))
                 .setContentTitle("Geofences are running in foreground")
@@ -89,12 +83,7 @@ class GeofenceServiceNotification(context: Context) : GeofenceNotification(conte
                 .setContentIntent(notificationPendingIntent)
                 .setGroup(GROUP_GEOFENCES)
 //                .addAction(android.R.drawable.ic_delete, "Remove", removePendingIntent)
-
-        // Dismiss notification once the user touches it
-        builder.setAutoCancel(true)
-
-//        val n = NotificationExtras.buildWithBackgroundColor(this, builder, -0x10000)
-
-        return builder
+                // Dismiss notification once the user touches it
+                .setAutoCancel(true)
     }
 }

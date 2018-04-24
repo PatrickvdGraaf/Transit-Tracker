@@ -61,4 +61,7 @@ class MyGeoFenceFragment : PlacesListener, GeofenceFragment(), OnMapReadyCallbac
         drawGeofences()
     }
 
+    override fun onPlaceRemoved(removedPosition: Int) {
+
+    }
 }

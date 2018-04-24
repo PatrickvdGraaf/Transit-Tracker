@@ -1,6 +1,7 @@
 package com.crepetete.transittracker.models.place
 
 import com.google.android.gms.location.Geofence
+import com.google.android.gms.location.places.GeoDataClient
 
 object PlacesController {
     private const val GEOFENCE_EXPIRATION_IN_HOURS = 1L
@@ -10,14 +11,6 @@ object PlacesController {
 
     private val mListeners = hashMapOf<String, PlacesListener>()
     private val mPlaces: MutableList<ParcelablePlace> = mutableListOf()
-
-    fun getGeofenceObjectsForPlaces(): Map<String, Geofence> {
-        val geofences = hashMapOf<String, Geofence>()
-        for (place in mPlaces) {
-            geofences[place.id] = fromParcelablePlace(place)
-        }
-        return geofences
-    }
 
     fun getGeofenceObjects(): List<Geofence> {
         val geofences = arrayListOf<Geofence>()
@@ -53,7 +46,40 @@ object PlacesController {
                 .build()
     }
 
+    fun getImageForPlace(id: String, geoDataClient: GeoDataClient) {
+        val imagePosition = getPositionForId(id)
+        if (imagePosition != -1) {
+            geoDataClient.getPlacePhotos(id).addOnCompleteListener { task ->
+                // Get the PlacePhotoMetadataBuffer (metadata for all the photos).
+                val photoMetadataBuffer = task.result.photoMetadata
+                if (photoMetadataBuffer.count > 0) {
+                    // Get first photo in the list.
+                    val photoMetadata = photoMetadataBuffer[0]
+                    // Get the attribution text.
+                    // TODO show attribution
+                    val attribution = photoMetadata.attributions
+                    // Get a full-size bitmap for the photo
+                    geoDataClient.getPhoto(photoMetadata).addOnCompleteListener { photoTask ->
+                        if (photoTask.isSuccessful) {
+                            val place = getPlaceForId(id)
+                            if (place != null) {
+                                place.setImage(photoTask.result.bitmap)
+                                notifyListeners(imagePosition)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private fun notifyListeners(position: Int) {
+        for (listener in mListeners.values) {
+            listener.onPlacesChanged(position)
+        }
+    }
+
+    private fun notifyRemoval(position: Int) {
         for (listener in mListeners.values) {
             listener.onPlacesChanged(position)
         }
@@ -69,11 +95,9 @@ object PlacesController {
     }
 
     fun removePlace(id: String) {
-        val place = getPlaceForId(id)
-        val position = mPlaces.indexOf(place)
-
-        mPlaces.remove(place)
-        notifyListeners(position)
+        val position = getPositionForId(id)
+        mPlaces.removeAt(position)
+        notifyRemoval(position)
     }
 
     fun removeListener(tag: String) {
@@ -91,6 +115,15 @@ object PlacesController {
             }
         }
         return null
+    }
+
+    private fun getPositionForId(id: String): Int {
+        for ((i, place) in mPlaces.withIndex()) {
+            if (place.id == id) {
+                return i
+            }
+        }
+        return -1
     }
 
     fun getNumberOfPlaces(): Int {

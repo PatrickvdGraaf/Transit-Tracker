@@ -20,7 +20,8 @@ class ParcelablePlace @SuppressLint("ValidFragment") private constructor(
         internal val latLng: LatLng,
         private val viewPort: LatLngBounds?,
         private val website: Uri?,
-        private val attributions: String) : Parcelable {
+        private val attributions: String,
+        private var mImage: Bitmap?) : Parcelable {
 
     private lateinit var mPhotoResult: Bitmap
 
@@ -51,7 +52,7 @@ class ParcelablePlace @SuppressLint("ValidFragment") private constructor(
 
             return ParcelablePlace(place.id, place.address.toString(), locale,
                     place.name.toString(), place.latLng, place.viewport, uri,
-                    attr.toString())
+                    attr.toString(), null)
         }
     }
 
@@ -63,7 +64,8 @@ class ParcelablePlace @SuppressLint("ValidFragment") private constructor(
             parcel.readParcelable<LatLng>(LatLng::class.java.classLoader),
             parcel.readParcelable<LatLngBounds>(LatLngBounds::class.java.classLoader),
             Uri.parse(parcel.readString()),
-            parcel.readString()
+            parcel.readString(),
+            parcel.readParcelable(Bitmap::class.java.classLoader)
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -75,9 +77,18 @@ class ParcelablePlace @SuppressLint("ValidFragment") private constructor(
         parcel.writeParcelable(viewPort, 0)
         parcel.writeString(website.toString())
         parcel.writeString(attributions)
+        parcel.writeValue(mImage)
     }
 
     override fun describeContents(): Int {
         return 0
+    }
+
+    fun getImage(): Bitmap? {
+        return mImage
+    }
+
+    fun setImage(bitmap: Bitmap) {
+        mImage = bitmap
     }
 }

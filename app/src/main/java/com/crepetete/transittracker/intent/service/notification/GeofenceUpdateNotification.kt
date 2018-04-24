@@ -1,8 +1,6 @@
 package com.crepetete.transittracker.intent.service.notification
 
-import android.annotation.SuppressLint
 import android.annotation.TargetApi
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -28,7 +26,6 @@ class GeofenceUpdateNotification(context: Context,
         return NotificationManager.IMPORTANCE_HIGH
     }
 
-    @SuppressLint("MissingSuperCall")
     override fun getBuilder(notificationManager: NotificationManager): Builder {
         // Android O requires a notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -65,12 +62,8 @@ class GeofenceUpdateNotification(context: Context,
 //                removeIntent, 0)
 
         // Define the notification settings
-        val builder = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Notification.Builder(mContext, mChannelId).setChannelId(mChannelId)
-        } else {
-            Notification.Builder(mContext)
-        }
-        builder.setSmallIcon(R.drawable.ic_notif_transit)
+        return super.getBuilder(notificationManager)
+                .setSmallIcon(mSmallIconId)
 //                .setLargeIcon()
                 .setColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
                 .setContentTitle(mTitle)
@@ -78,22 +71,8 @@ class GeofenceUpdateNotification(context: Context,
                 .setContentIntent(notificationPendingIntent)
                 .setGroup(GROUP_GEOFENCES)
 //                .addAction(android.R.drawable.ic_delete, "Remove", removePendingIntent)
-
-
-        // Dismiss notification once the user touches it
-        builder.setAutoCancel(true)
-
-        return builder
-
-//        return super.getBuilder()
-//                .setSmallIcon(R.drawable.ic_notif_transit)
-//                .setColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
-//                .setContentTitle(mTitle)
-//                .setContentText(mText)
-//                .setContentIntent(mNotificationPendingIntent)
-//                .setAutoCancel(true)
-////                .setLargeIcon()
-////                .addAction(android.R.drawable.ic_delete, "Remove", removePendingIntent)
+                // Dismiss notification once the user touches it
+                .setAutoCancel(true)
     }
 
     override fun getSpecificTitle(): String? {

@@ -14,7 +14,6 @@ import com.google.android.gms.location.places.Places
 
 
 class PlacesAdapter : PlacesListener, RecyclerView.Adapter<PlaceViewHolder>() {
-    private val mItems = mutableListOf<Pair<String, Boolean>>()
     private val mPlaces: List<ParcelablePlace> = PlacesController.getPlaces()
     private var mGeoDataClient: GeoDataClient? = null
 
@@ -35,10 +34,7 @@ class PlacesAdapter : PlacesListener, RecyclerView.Adapter<PlaceViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
-        holder.setPlace(mPlaces[position])
-        if (mGeoDataClient != null) {
-            holder.setImage(mGeoDataClient)
-        }
+        holder.setPlace(mPlaces[position], mGeoDataClient)
     }
 
     override fun getItemCount(): Int {
@@ -51,6 +47,10 @@ class PlacesAdapter : PlacesListener, RecyclerView.Adapter<PlaceViewHolder>() {
 
     override fun onPlacesChanged(updatedPosition: Int) {
         notifyItemChanged(updatedPosition)
+    }
+
+    override fun onPlaceRemoved(removedPosition: Int) {
+        notifyItemRemoved(removedPosition)
     }
 
     fun onResume() {

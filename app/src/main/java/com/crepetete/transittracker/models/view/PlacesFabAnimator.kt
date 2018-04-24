@@ -29,4 +29,8 @@ class PlacesFabAnimator(context: Context, mFabs: Array<FloatingActionButton>,
             showSecondFab()
         }
     }
+
+    override fun onPlaceRemoved(removedPosition: Int) {
+
+    }
 }
