@@ -28,20 +28,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:menu="@menu/navigation" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fab_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        android:backgroundTint="@color/colorPrimary"
-        android:scaleType="center"
-        android:src="@drawable/ic_send_white_24dp"
-        android:tint="@color/colorAccent"
-        app:borderWidth="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/fab_add"
-        app:layout_constraintStart_toStartOf="@+id/fab_add"
-        app:layout_constraintTop_toBottomOf="parent"
-        app:rippleColor="@color/colorAccent" />
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab_add"
@@ -56,4 +42,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="parent"
         app:rippleColor="@color/colorGray" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:backgroundTint="@color/colorPrimary"
+        android:scaleType="center"
+        android:src="@drawable/ic_send_white_24dp"
+        android:tint="@color/colorAccent"
+        app:borderWidth="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/fab_add"
+        app:layout_constraintStart_toStartOf="@+id/fab_add"
+        app:layout_constraintTop_toBottomOf="parent"
+        app:rippleColor="@color/colorAccent" />
 </android.support.constraint.ConstraintLayout>

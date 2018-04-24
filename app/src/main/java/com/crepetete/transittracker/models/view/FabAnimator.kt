@@ -92,7 +92,6 @@ open class FabAnimator(
                 ConstraintSet.BOTTOM)
 
         val transition = ChangeBounds()
-        transition.interpolator = OvershootInterpolator()
         TransitionManager.beginDelayedTransition(mConstraintLayout, transition)
         firstFab.size = FloatingActionButton.SIZE_NORMAL
         constraintSet.applyTo(mConstraintLayout)

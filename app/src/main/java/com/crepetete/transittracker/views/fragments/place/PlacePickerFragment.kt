@@ -9,7 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.crepetete.transittracker.R
-import com.crepetete.transittracker.models.place.adapter.PlacesAdapter
+import com.crepetete.transittracker.models.place.adapter.viewholder.adapter.PlacesAdapter
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.ui.PlacePicker
 

@@ -12,7 +12,6 @@ import android.support.annotation.CallSuper
 import android.support.annotation.DrawableRes
 import android.support.annotation.IntRange
 import android.support.annotation.RequiresApi
-import android.support.v4.app.NotificationCompat
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.views.activities.main.MainActivity
 import kotlin.reflect.KClass
@@ -21,6 +20,8 @@ abstract class GeofenceNotification : Notification {
     companion object {
         const val CHANNEL_GEOFENCE_UPDATE = "CHANNEL_GEOFENCE_UPDATE"
         const val CHANNEL_GEOFENCE_SERVICE = "CHANNEL_GEOFENCE_SERVICE"
+
+        const val GROUP_GEOFENCES = "GROUP_GEOFENCES"
     }
 
     internal var mContext: Context
@@ -62,24 +63,19 @@ abstract class GeofenceNotification : Notification {
     abstract fun getImportance(): Int
 
     @CallSuper
-    open fun getBuilder(notificationManager: NotificationManager): NotificationCompat.Builder {
-        val builder = NotificationCompat.Builder(mContext, mChannelId)
-
-        // Set the Channel ID for Android O.
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            builder.setChannelId(mChannelId)
-//            createNotificationChannel()
-//        }
-        return builder
+    open fun getBuilder(notificationManager: NotificationManager): Builder {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            Builder(mContext, mChannelId).setChannelId(mChannelId)
+        } else {
+            Builder(mContext)
+        }
     }
 
     abstract fun getSpecificTitle(): String?
 
     @TargetApi(Build.VERSION_CODES.O)
-    abstract fun createNotificationChannel()
-
-    internal fun getChannelDescriptionFor(id: String): String {
-        return when (id) {
+    internal fun getChannelDescription(): String {
+        return when (mChannelId) {
             CHANNEL_GEOFENCE_UPDATE -> {
                 "Notifications when entering or exiting a marked area."
             }

@@ -16,7 +16,6 @@ import timber.log.Timber
 
 class GeofenceBroadCastReceiver : BroadcastReceiver() {
     companion object {
-        internal const val GEOFENCE_ACTION_CHANNEL_ID = "GEOFENCE_ACTION_CHANNEL_ID"
         const val GEOFENCE_ACTION = "com.example.geofence.ACTION_RECEIVE_GEOFENCE"
     }
 

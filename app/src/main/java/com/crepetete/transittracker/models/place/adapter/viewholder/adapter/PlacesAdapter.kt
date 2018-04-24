@@ -1,4 +1,4 @@
-package com.crepetete.transittracker.models.place.adapter
+package com.crepetete.transittracker.models.place.adapter.viewholder.adapter
 
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
@@ -14,6 +14,7 @@ import com.google.android.gms.location.places.Places
 
 
 class PlacesAdapter : PlacesListener, RecyclerView.Adapter<PlaceViewHolder>() {
+    private val mItems = mutableListOf<Pair<String, Boolean>>()
     private val mPlaces: List<ParcelablePlace> = PlacesController.getPlaces()
     private var mGeoDataClient: GeoDataClient? = null
 
