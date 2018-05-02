@@ -41,11 +41,11 @@
 
         <!-- IntentService that listens for geofence transitions -->
         <service
-            android:name=".intent.service.GeofenceService"
+            android:name="com.crepetete.transittracker.models.intent.service.GeofenceService"
             android:icon="@mipmap/ic_launcher_round"
             android:label="@string/app_name" />
         <receiver
-            android:name="com.crepetete.transittracker.intent.broadcast.GeofenceBroadCastReceiver"
+            android:name="com.crepetete.transittracker.models.intent.broadcast.GeofenceBroadCastReceiver"
             android:enabled="true"
             android:exported="false">
             <intent-filter>

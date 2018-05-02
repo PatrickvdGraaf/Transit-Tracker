@@ -1,5 +1,8 @@
 package com.crepetete.transittracker.models.place
 
+import android.content.Context
+import android.support.v7.preference.PreferenceManager
+import com.crepetete.transittracker.R
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.places.GeoDataClient
 
@@ -7,20 +10,19 @@ object PlacesController {
     private const val GEOFENCE_EXPIRATION_IN_HOURS = 1L
     private const val GEOFENCE_EXPIRATION_IN_MILLISECONDS =
             GEOFENCE_EXPIRATION_IN_HOURS * 60 * 60 * 1000
-    const val GEOFENCE_RADIUS_IN_METERS = 100.0f
 
     private val mListeners = hashMapOf<String, PlacesListener>()
     private val mPlaces: MutableList<ParcelablePlace> = mutableListOf()
 
-    fun getGeofenceObjects(): List<Geofence> {
+    fun getGeofenceObjects(context: Context): List<Geofence> {
         val geofences = arrayListOf<Geofence>()
         for (place in mPlaces) {
-            geofences.add(fromParcelablePlace(place))
+            geofences.add(fromParcelablePlace(context, place))
         }
         return geofences
     }
 
-    private fun fromParcelablePlace(place: ParcelablePlace): Geofence {
+    private fun fromParcelablePlace(context: Context, place: ParcelablePlace): Geofence {
         return Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
                 // geofence.
@@ -29,9 +31,10 @@ object PlacesController {
                 // Set the circular region of this geofence.
                 // Recommended value is a 100 meters for most situations. If the geofence is in the
                 // countryside, 500 meters could be used.
+
                 .setCircularRegion(place.latLng.latitude,
                         place.latLng.longitude,
-                        GEOFENCE_RADIUS_IN_METERS
+                        getGeofenceRadiusFromPrefs(context)
                 )
                 // Set the expiration duration of the geofence. This geofence gets automatically
                 // removed after this period of time.
@@ -44,6 +47,12 @@ object PlacesController {
                 .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER or
                         Geofence.GEOFENCE_TRANSITION_EXIT)
                 .build()
+    }
+
+    fun getGeofenceRadiusFromPrefs(context: Context): Float {
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        return prefs.getInt(context.getString(R.string.pref_geofence_radius),
+                300).toFloat()
     }
 
     fun getImageForPlace(id: String, geoDataClient: GeoDataClient) {
