@@ -39,7 +39,7 @@ class PlaceViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
             val v = view.findViewById<ViewGroup>(R.id.card_content)
             v.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
 
-            PlacesController.getImageForPlace(mPlaceId, geoDataClient)
+            PlacesController.loadImageForPlace(mPlaceId, geoDataClient)
         }
     }
 }

@@ -2,26 +2,35 @@
 <android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="Settings">
 
-    <CheckBoxPreference
+    <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="checkbox_preference"
         android:summary="Show a notification when running in the background."
         android:title="Service notification" />
 
-    <CheckBoxPreference
+    <android.support.v7.preference.CheckBoxPreference
         android:defaultValue="true"
         android:key="checkbox_preference2"
         android:title="Save recent Places" />
 
-    <!--<PreferenceCategory-->
-        <!--android:key="pref_geofence"-->
-        <!--android:title="Geofences">-->
-        <!--<android.support.v7.preference.DropDownPreference-->
-            <!--android:entries="@array/geofence_diameter_options"-->
-            <!--android:entryValues="@array/geofence_diameter_values"-->
-            <!--android:key="geofence_diameter"-->
-            <!--android:defaultValue="0"-->
-            <!--android:summary="Set the default diameter for the areas that trigger a notification."-->
-            <!--android:title="Geofence diameter" />-->
-    <!--</PreferenceCategory>-->
+    <android.support.v7.preference.PreferenceCategory
+        android:key="pref_geofence"
+        android:title="Geofences">
+        <!--<android.support.v7.preference.SeekBarPreference-->
+            <!--android:key="keyName"-->
+            <!--android:title="Property Label"-->
+            <!--android:summary="Summary."-->
+            <!--android:max="5"-->
+            <!--android:defaultValue="0" />-->
+
+        <android.support.v7.preference.ListPreference
+            android:defaultValue="2"
+            android:dialogIcon="@drawable/ic_edit_location_24dp"
+            android:dialogTitle="Select Geofence diameter"
+            android:entries="@array/geofence_diameter_options"
+            android:entryValues="@array/geofence_diameter_values"
+            android:key="geofence_diameter"
+            android:summary="Set the default diameter for the areas that trigger a notification."
+            android:title="Geofence diameter" />
+    </android.support.v7.preference.PreferenceCategory>
 </android.support.v7.preference.PreferenceScreen>

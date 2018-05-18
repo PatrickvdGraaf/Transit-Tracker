@@ -12,14 +12,22 @@ object PlacesController {
     private val mListeners = hashMapOf<String, PlacesListener>()
     private val mPlaces: MutableList<ParcelablePlace> = mutableListOf()
 
+    /**
+     * Creates a List of Geofences from all Places in mPlaces
+     */
     fun getGeofenceObjects(): List<Geofence> {
         val geofences = arrayListOf<Geofence>()
         for (place in mPlaces) {
-            geofences.add(fromParcelablePlace(place))
+//            geofences.add(fromParcelablePlace(place))
+            geofences.add(place.getGeofence())
         }
         return geofences
     }
 
+
+    /**
+     * Build a Geofence object for a specific place
+     */
     private fun fromParcelablePlace(place: ParcelablePlace): Geofence {
         return Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
@@ -46,7 +54,7 @@ object PlacesController {
                 .build()
     }
 
-    fun getImageForPlace(id: String, geoDataClient: GeoDataClient) {
+    fun loadImageForPlace(id: String, geoDataClient: GeoDataClient) {
         val imagePosition = getPositionForId(id)
         if (imagePosition != -1) {
             geoDataClient.getPlacePhotos(id).addOnCompleteListener { task ->
@@ -128,5 +136,9 @@ object PlacesController {
 
     fun getNumberOfPlaces(): Int {
         return mPlaces.size
+    }
+
+    fun isEmpty(): Boolean {
+        return mPlaces.isEmpty()
     }
 }

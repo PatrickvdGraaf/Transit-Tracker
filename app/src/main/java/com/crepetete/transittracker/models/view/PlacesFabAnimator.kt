@@ -14,23 +14,27 @@ class PlacesFabAnimator(context: Context, mFabs: Array<FloatingActionButton>,
         PlacesController.addListener(this)
     }
 
-    fun removeListener() {
-        PlacesController.removeListener(getListenerTag())
-    }
-
     override fun getListenerTag(): String {
         return "PlacesFabAnimator"
     }
 
     override fun onPlacesChanged(updatedPosition: Int) {
-        if (PlacesController.getNumberOfPlaces() <= 0) {
+        checkFabVisibilities()
+    }
+
+    override fun onPlaceRemoved(removedPosition: Int) {
+        checkFabVisibilities()
+    }
+
+    fun removeListener() {
+        PlacesController.removeListener(getListenerTag())
+    }
+
+    private fun checkFabVisibilities() {
+        if (PlacesController.isEmpty()) {
             hideSecondFab()
         } else {
             showSecondFab()
         }
-    }
-
-    override fun onPlaceRemoved(removedPosition: Int) {
-
     }
 }
