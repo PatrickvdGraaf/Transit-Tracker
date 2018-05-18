@@ -7,11 +7,11 @@
         <item>1km</item>
         <item>2km</item>
     </string-array>
-    <integer-array name="geofence_diameter_values">
+    <string-array name="geofence_diameter_values">
         <item>100</item>
         <item>200</item>
         <item>500</item>
         <item>1000</item>
         <item>2000</item>
-    </integer-array>
+    </string-array>
 </resources>

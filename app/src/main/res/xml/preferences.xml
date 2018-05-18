@@ -1,36 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:asp="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="Settings">
-
-    <!--<CheckBoxPreference-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="checkbox_preference"-->
-    <!--android:summary="Show a notification when running in the background."-->
-    <!--android:title="Service notification" />-->
-
-    <!--<CheckBoxPreference-->
-    <!--android:defaultValue="true"-->
-    <!--android:key="checkbox_preference2"-->
-    <!--android:title="Save recent Places" />-->
-
-    <!--<PreferenceCategory-->
-    <!--android:key="pref_geofence"-->
-    android:title="Geofences">
-    <!--<DropDownPreference-->
-    <!--android:defaultValue="0"-->
-    <!--android:entries="@array/geofence_diameter_options"-->
-    <!--android:entryValues="@array/geofence_diameter_values"-->
-    <!--android:key="geofence_diameter"-->
-    <!--android:summary="Set the default diameter for the areas that trigger a notification."-->
-    <!--android:title="Geofence diameter" />-->
-
-    <android.support.v7.preference.SeekBarPreference
-        android:defaultValue="500"
-        android:key="@string/pref_geofence_radius"
-        android:max="2000"
-        android:summary="This is the summary"
-        android:title="This is a title"
-        asp:min="100" />
-    <!--</PreferenceCategory>-->
-</android.support.v7.preference.PreferenceScreen>
+    <PreferenceCategory
+        android:key="pref_geofence"
+        android:title="Geofences">
+        <ListPreference
+            android:entries="@array/geofence_diameter_options"
+            android:entryValues="@array/geofence_diameter_values"
+            android:key="@string/pref_geofence_radius"
+            android:summary="Set the default size of the area that will notify you when you enter it."
+            android:title="Area Radius" />
+    </PreferenceCategory>
+</PreferenceScreen>

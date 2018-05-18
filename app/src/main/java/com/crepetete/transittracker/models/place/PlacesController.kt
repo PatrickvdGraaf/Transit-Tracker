@@ -1,7 +1,7 @@
 package com.crepetete.transittracker.models.place
 
 import android.content.Context
-import android.support.v7.preference.PreferenceManager
+import android.preference.PreferenceManager
 import com.crepetete.transittracker.R
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.places.GeoDataClient
@@ -51,8 +51,9 @@ object PlacesController {
 
     fun getGeofenceRadiusFromPrefs(context: Context): Float {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        return prefs.getInt(context.getString(R.string.pref_geofence_radius),
-                300).toFloat()
+        val radius = prefs.getString(context.getString(R.string.pref_geofence_radius),
+                "500").toFloat()
+        return radius
     }
 
     fun getImageForPlace(id: String, geoDataClient: GeoDataClient) {

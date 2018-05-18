@@ -311,6 +311,8 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
                                     "Failed to add Geofences",
                                     Toast.LENGTH_SHORT).show()
 
+                            mGoogleApiClient.disconnect()
+                            activity!!.stopService(Intent(context, GeofenceService::class.java))
                             Timber.e(it)
                         }
             } catch (ex: Throwable) {
