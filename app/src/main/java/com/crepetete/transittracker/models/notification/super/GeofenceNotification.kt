@@ -1,4 +1,4 @@
-package com.crepetete.transittracker.intent.service.notification.`super`
+package com.crepetete.transittracker.models.notification.`super`
 
 import android.annotation.TargetApi
 import android.app.Notification
@@ -21,6 +21,7 @@ abstract class GeofenceNotification : Notification {
         const val CHANNEL_GEOFENCE_UPDATE = "CHANNEL_GEOFENCE_UPDATE"
         const val CHANNEL_GEOFENCE_SERVICE = "CHANNEL_GEOFENCE_SERVICE"
 
+        internal const val SUMMARY_GEOFENCE_ID = 0
         const val GROUP_GEOFENCES = "GROUP_GEOFENCES"
     }
 

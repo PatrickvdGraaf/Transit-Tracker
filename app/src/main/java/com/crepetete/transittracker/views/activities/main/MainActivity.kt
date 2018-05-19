@@ -13,10 +13,10 @@ import android.widget.Toast
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.config.AnimationHelper
 import com.crepetete.transittracker.config.bind
-import com.crepetete.transittracker.intent.service.GeofenceService
+import com.crepetete.transittracker.models.intent.service.GeofenceService
 import com.crepetete.transittracker.models.place.ParcelablePlace
 import com.crepetete.transittracker.models.place.PlacesController
-import com.crepetete.transittracker.models.view.PlacesFabAnimator
+import com.crepetete.transittracker.models.view.fab.PlacesFabAnimator
 import com.crepetete.transittracker.views.fragments.geo.MyGeoFenceFragment
 import com.crepetete.transittracker.views.fragments.home.HomeFragment
 import com.crepetete.transittracker.views.fragments.place.PlacePickerFragment

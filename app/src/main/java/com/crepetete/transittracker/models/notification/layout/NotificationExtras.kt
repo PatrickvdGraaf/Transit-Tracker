@@ -1,4 +1,4 @@
-package com.crepetete.transittracker.intent.service.notification.layout
+package com.crepetete.transittracker.models.notification.layout
 
 import android.app.Notification
 import android.content.Context

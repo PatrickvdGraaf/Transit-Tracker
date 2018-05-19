@@ -1,6 +1,6 @@
-package com.crepetete.transittracker.intent.service.notification
+package com.crepetete.transittracker.models.notification
 
-import android.annotation.SuppressLint
+import android.annotation.TargetApi
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -11,41 +11,30 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import com.crepetete.transittracker.R
-import com.crepetete.transittracker.intent.service.notification.`super`.GeofenceNotification
+import com.crepetete.transittracker.models.notification.`super`.GeofenceNotification
 import com.crepetete.transittracker.views.activities.main.MainActivity
 
-class GeofenceServiceNotification(context: Context) : GeofenceNotification(context) {
-    override var mChannelId = CHANNEL_GEOFENCE_SERVICE
+class GeofenceUpdateNotification(context: Context,
+                                 private val mTitle: String,
+                                 private val mText: String)
+    : GeofenceNotification(context) {
+    @TargetApi(Build.VERSION_CODES.O)
+//    override var mChannelId: String = CHANNEL_GEOFENCE_UPDATE
+    override var mChannelId: String = "CHANNEL_ID"
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun getImportance(): Int {
         return NotificationManager.IMPORTANCE_HIGH
     }
 
-    override fun getSpecificTitle(): String? {
-        return null
-    }
-
-    @SuppressLint("MissingSuperCall")
     override fun getBuilder(notificationManager: NotificationManager): Builder {
-//        return super.getBuilder()
-//                .setSmallIcon(mSmallIconId)
-//                .setColor(ContextCompat.getColor(mContext, R.color.colorAccent))
-//                .setContentTitle("Geofences are running in foreground")
-//                .setContentText(mContext.getString(R.string.geofence_transition_notification_text))
-//                .setContentIntent(mNotificationPendingIntent)
-//                // Dismiss notification once the user touches it
-//                .setAutoCancel(true)
-////                .setLargeIcon()
-////                .addAction(android.R.drawable.ic_delete, "Remove", removePendingIntent)
         // Android O requires a notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = mContext.getString(R.string.app_name)
 
             //Create a channel for the notification
-            val channel = NotificationChannel(mChannelId, name,
-                    NotificationManager.IMPORTANCE_HIGH)
-            channel.description = "Notifications when the user enters or leaves an area."
+            val channel = NotificationChannel(mChannelId, name, getImportance())
+            channel.description = getChannelDescription()
 
             // Set the Notification Channel for the Notification Manager
             notificationManager.createNotificationChannel(channel)
@@ -75,15 +64,20 @@ class GeofenceServiceNotification(context: Context) : GeofenceNotification(conte
 
         // Define the notification settings
         return super.getBuilder(notificationManager)
-                .setSmallIcon(R.drawable.ic_notif_transit)
+                .setSmallIcon(mSmallIconId)
 //                .setLargeIcon()
-                .setColor(ContextCompat.getColor(mContext, R.color.colorAccent))
-                .setContentTitle("Geofences are running in foreground")
-                .setContentText(mContext.getString(R.string.geofence_transition_notification_text))
+                .setColor(ContextCompat.getColor(mContext, R.color.notification_icon_bg_color))
+                .setContentTitle(mTitle)
+                .setContentText(mText)
                 .setContentIntent(notificationPendingIntent)
                 .setGroup(GROUP_GEOFENCES)
 //                .addAction(android.R.drawable.ic_delete, "Remove", removePendingIntent)
                 // Dismiss notification once the user touches it
                 .setAutoCancel(true)
     }
+
+    override fun getSpecificTitle(): String? {
+        return null
+    }
+
 }

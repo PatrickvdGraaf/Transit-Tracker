@@ -1,4 +1,4 @@
-package com.crepetete.transittracker.models.view
+package com.crepetete.transittracker.models.view.fab
 
 import android.content.Context
 import android.support.annotation.Size

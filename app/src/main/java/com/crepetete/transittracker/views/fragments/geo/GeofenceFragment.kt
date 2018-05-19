@@ -27,8 +27,8 @@ import android.view.animation.BounceInterpolator
 import android.widget.Toast
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.config.Constants
-import com.crepetete.transittracker.intent.broadcast.GeofenceBroadCastReceiver
-import com.crepetete.transittracker.intent.service.GeofenceService
+import com.crepetete.transittracker.models.intent.broadcast.GeofenceBroadCastReceiver
+import com.crepetete.transittracker.models.intent.service.GeofenceService
 import com.crepetete.transittracker.models.place.ParcelablePlace
 import com.crepetete.transittracker.models.place.PlacesController
 import com.google.android.gms.common.ConnectionResult
@@ -285,10 +285,15 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
 //            removeGeofence()
 
             try {
+                if (context == null) {
+                    Timber.d("Couldn't start geofences, context was null.")
+                    return
+                }
+
                 val builder = GeofencingRequest.Builder()
                 builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER)
                 // Add the geofences to be monitored by geofencing service.
-                builder.addGeofences(PlacesController.getGeofenceObjects())
+                builder.addGeofences(PlacesController.getGeofenceObjects(context!!))
 
                 mGeofencingClient.addGeofences(builder.build(), getGeofencePendingIntent())
                         ?.addOnSuccessListener {
@@ -306,6 +311,8 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
                                     "Failed to add Geofences",
                                     Toast.LENGTH_SHORT).show()
 
+                            mGoogleApiClient.disconnect()
+                            activity!!.stopService(Intent(context, GeofenceService::class.java))
                             Timber.e(it)
                         }
             } catch (ex: Throwable) {
@@ -385,7 +392,7 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
                     .fillColor(ColorUtils.setAlphaComponent(ContextCompat.getColor(context!!,
                             R.color.colorPrimaryLight),
                             100))
-                    .radius(PlacesController.GEOFENCE_RADIUS_IN_METERS.toDouble())
+                    .radius(PlacesController.getGeofenceRadiusFromPrefs(context!!).toDouble())
             mMap.addCircle(circleOptions)?.let { mCircles.add(it) }
         }
 

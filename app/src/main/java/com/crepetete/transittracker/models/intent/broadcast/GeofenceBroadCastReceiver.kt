@@ -1,14 +1,18 @@
-package com.crepetete.transittracker.intent.broadcast
+package com.crepetete.transittracker.models.intent.broadcast
 
+import android.app.Notification.EXTRA_NOTIFICATION_ID
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.support.v4.content.LocalBroadcastManager
 import android.text.TextUtils
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.config.GeofenceErrorMessages
-import com.crepetete.transittracker.intent.service.notification.GeofenceUpdateNotification
+import com.crepetete.transittracker.models.intent.service.GeofenceService
+import com.crepetete.transittracker.models.notification.GeofenceUpdateNotification
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingEvent
 import timber.log.Timber
@@ -17,17 +21,34 @@ import timber.log.Timber
 class GeofenceBroadCastReceiver : BroadcastReceiver() {
     companion object {
         const val GEOFENCE_ACTION = "com.example.geofence.ACTION_RECEIVE_GEOFENCE"
+        const val GEOFENCE_ACTION_STOP = "${GEOFENCE_ACTION}_STOP"
+
+        fun getStopIntent(context: Context): PendingIntent {
+            val snoozeIntent = Intent(context, GeofenceBroadCastReceiver::class.java)
+            snoozeIntent.action = GEOFENCE_ACTION_STOP
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                snoozeIntent.putExtra(EXTRA_NOTIFICATION_ID, 0)
+            }
+            return PendingIntent.getBroadcast(context, 0, snoozeIntent, 0)
+        }
     }
 
     private val mBroadCastIntent = Intent()
 
     override fun onReceive(context: Context?, intent: Intent?) {
-        if (context != null) {
-            val geofencingEvent = GeofencingEvent.fromIntent(intent)
-            if (geofencingEvent.hasError()) {
-                handleError(context, geofencingEvent)
-            } else {
-                handleEnterExit(context, geofencingEvent)
+        if (context != null && intent != null) {
+            when (intent.action) {
+                GEOFENCE_ACTION_STOP -> {
+                    context.stopService(Intent(context, GeofenceService::class.java))
+                }
+                else -> {
+                    val geofencingEvent = GeofencingEvent.fromIntent(intent)
+                    if (geofencingEvent.hasError()) {
+                        handleError(context, geofencingEvent)
+                    } else {
+                        handleEnterExit(context, geofencingEvent)
+                    }
+                }
             }
         }
     }

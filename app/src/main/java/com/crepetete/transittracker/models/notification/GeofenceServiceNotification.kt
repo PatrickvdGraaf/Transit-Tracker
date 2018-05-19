@@ -1,6 +1,7 @@
-package com.crepetete.transittracker.intent.service.notification
+package com.crepetete.transittracker.models.notification
 
-import android.annotation.TargetApi
+import android.annotation.SuppressLint
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -11,28 +12,42 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import com.crepetete.transittracker.R
-import com.crepetete.transittracker.intent.service.notification.`super`.GeofenceNotification
+import com.crepetete.transittracker.models.intent.broadcast.GeofenceBroadCastReceiver
+import com.crepetete.transittracker.models.notification.`super`.GeofenceNotification
 import com.crepetete.transittracker.views.activities.main.MainActivity
 
-class GeofenceUpdateNotification(context: Context,
-                                 private val mTitle: String,
-                                 private val mText: String)
-    : GeofenceNotification(context) {
-    @TargetApi(Build.VERSION_CODES.O)
-    override var mChannelId: String = CHANNEL_GEOFENCE_UPDATE
+class GeofenceServiceNotification(context: Context) : GeofenceNotification(context) {
+//    override var mChannelId = CHANNEL_GEOFENCE_SERVICE
+    override var mChannelId = "CHANNEL_ID"
 
     @RequiresApi(Build.VERSION_CODES.N)
     override fun getImportance(): Int {
         return NotificationManager.IMPORTANCE_HIGH
     }
 
+    override fun getSpecificTitle(): String? {
+        return null
+    }
+
+    @SuppressLint("MissingSuperCall")
     override fun getBuilder(notificationManager: NotificationManager): Builder {
+//        return super.getBuilder()
+//                .setSmallIcon(mSmallIconId)
+//                .setColor(ContextCompat.getColor(mContext, R.color.colorAccent))
+//                .setContentTitle("Geofences are running in foreground")
+//                .setContentText(mContext.getString(R.string.geofence_transition_notification_text))
+//                .setContentIntent(mNotificationPendingIntent)
+//                // Dismiss notification once the user touches it
+//                .setAutoCancel(true)
+////                .setLargeIcon()
+////                .addAction(android.R.drawable.ic_delete, "Remove", removePendingIntent)
         // Android O requires a notification channel
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val name = mContext.getString(R.string.app_name)
 
             //Create a channel for the notification
-            val channel = NotificationChannel(mChannelId, name, getImportance())
+            val channel = NotificationChannel(mChannelId, name,
+                    NotificationManager.IMPORTANCE_HIGH)
             channel.description = getChannelDescription()
 
             // Set the Notification Channel for the Notification Manager
@@ -61,22 +76,20 @@ class GeofenceUpdateNotification(context: Context,
 //        val removePendingIntent = PendingIntent.getBroadcast(context, 0,
 //                removeIntent, 0)
 
+        val stopAction = Notification.Action.Builder(R.drawable.ic_stop_24dp, "Stop",
+                GeofenceBroadCastReceiver.getStopIntent(mContext)).build()
+
         // Define the notification settings
         return super.getBuilder(notificationManager)
-                .setSmallIcon(mSmallIconId)
+                .setSmallIcon(R.drawable.ic_notif_transit)
 //                .setLargeIcon()
-                .setColor(ContextCompat.getColor(mContext, R.color.colorPrimary))
-                .setContentTitle(mTitle)
-                .setContentText(mText)
-                .setContentIntent(notificationPendingIntent)
+                .setColor(ContextCompat.getColor(mContext, R.color.colorPrimaryDark))
+                .setContentTitle("Geofences are running in foreground")
+                .setContentText(mContext.getString(R.string.geofence_transition_notification_text))
+//                .setContentIntent(notificationPendingIntent) Open App on Click
                 .setGroup(GROUP_GEOFENCES)
-//                .addAction(android.R.drawable.ic_delete, "Remove", removePendingIntent)
                 // Dismiss notification once the user touches it
                 .setAutoCancel(true)
+                .addAction(stopAction)
     }
-
-    override fun getSpecificTitle(): String? {
-        return null
-    }
-
 }

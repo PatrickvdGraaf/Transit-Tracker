@@ -1,36 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.preference.PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="Settings">
-
-    <android.support.v7.preference.CheckBoxPreference
-        android:defaultValue="true"
-        android:key="checkbox_preference"
-        android:summary="Show a notification when running in the background."
-        android:title="Service notification" />
-
-    <android.support.v7.preference.CheckBoxPreference
-        android:defaultValue="true"
-        android:key="checkbox_preference2"
-        android:title="Save recent Places" />
-
-    <android.support.v7.preference.PreferenceCategory
+    <PreferenceCategory
         android:key="pref_geofence"
         android:title="Geofences">
-        <!--<android.support.v7.preference.SeekBarPreference-->
-            <!--android:key="keyName"-->
-            <!--android:title="Property Label"-->
-            <!--android:summary="Summary."-->
-            <!--android:max="5"-->
-            <!--android:defaultValue="0" />-->
-
-        <android.support.v7.preference.ListPreference
-            android:defaultValue="2"
-            android:dialogIcon="@drawable/ic_edit_location_24dp"
-            android:dialogTitle="Select Geofence diameter"
+        <ListPreference
             android:entries="@array/geofence_diameter_options"
             android:entryValues="@array/geofence_diameter_values"
-            android:key="geofence_diameter"
-            android:summary="Set the default diameter for the areas that trigger a notification."
-            android:title="Geofence diameter" />
-    </android.support.v7.preference.PreferenceCategory>
-</android.support.v7.preference.PreferenceScreen>
+            android:key="@string/pref_geofence_radius"
+            android:summary="Set the default size of the area that will notify you when you enter it."
+            android:title="Area Radius" />
+    </PreferenceCategory>
+</PreferenceScreen>

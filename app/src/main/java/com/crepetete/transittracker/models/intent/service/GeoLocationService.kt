@@ -1,4 +1,4 @@
-package com.crepetete.transittracker.intent.service
+package com.crepetete.transittracker.models.intent.service
 
 import android.annotation.SuppressLint
 import android.app.Service

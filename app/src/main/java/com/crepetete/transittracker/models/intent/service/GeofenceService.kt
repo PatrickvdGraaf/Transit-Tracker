@@ -1,4 +1,4 @@
-package com.crepetete.transittracker.intent.service
+package com.crepetete.transittracker.models.intent.service
 
 import android.annotation.SuppressLint
 import android.app.Notification
@@ -11,9 +11,9 @@ import android.location.Location
 import android.location.LocationListener
 import android.os.Bundle
 import android.os.IBinder
-import com.crepetete.transittracker.intent.broadcast.GeofenceBroadCastReceiver
-import com.crepetete.transittracker.intent.service.notification.GeofenceServiceNotification
-import com.crepetete.transittracker.intent.service.notification.`super`.GeofenceNotification
+import com.crepetete.transittracker.models.intent.broadcast.GeofenceBroadCastReceiver
+import com.crepetete.transittracker.models.notification.GeofenceServiceNotification
+import com.crepetete.transittracker.models.notification.`super`.GeofenceNotification
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
