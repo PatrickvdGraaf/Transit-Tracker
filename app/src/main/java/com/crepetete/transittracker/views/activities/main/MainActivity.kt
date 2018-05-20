@@ -6,9 +6,10 @@ import android.os.Bundle
 import android.support.annotation.IdRes
 import android.support.design.widget.BottomNavigationView
 import android.support.design.widget.FloatingActionButton
+import android.support.v4.app.ActivityCompat.startActivityForResult
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
 import android.support.v4.app.FragmentManager
+import android.support.v7.app.AppCompatActivity
 import android.widget.Toast
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.config.AnimationHelper
@@ -18,8 +19,8 @@ import com.crepetete.transittracker.models.place.ParcelablePlace
 import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.view.fab.PlacesFabAnimator
 import com.crepetete.transittracker.views.fragments.geo.MyGeoFenceFragment
-import com.crepetete.transittracker.views.fragments.home.HomeFragment
 import com.crepetete.transittracker.views.fragments.place.PlacePickerFragment
+import com.crepetete.transittracker.views.fragments.saves.ItemFragment
 import com.crepetete.transittracker.views.fragments.settings.SettingsFragment
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.common.GooglePlayServicesNotAvailableException
@@ -29,7 +30,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import timber.log.Timber
 
 
-class MainActivity : FragmentActivity() {
+class MainActivity : AppCompatActivity() {
     companion object {
         const val TAG_SAVED_FRAG = "MyTravelsFragment"
         const val TAG_SETTINGS_FRAG = "SettingsFragment"
@@ -49,40 +50,19 @@ class MainActivity : FragmentActivity() {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView
             .OnNavigationItemSelectedListener { item ->
-                val tag: String
-                var fragment: Fragment?
-
                 if (item.itemId != R.id.navigation_dashboard) {
                     mFabAnimator.hideFabs()
                 }
 
                 when (item.itemId) {
                     R.id.navigation_home -> {
-                        tag = TAG_SAVED_FRAG
-
-                        fragment = mFragmentManager.findFragmentByTag(tag)
-                        if (fragment == null) {
-                            fragment = HomeFragment()
-                        }
-                        mFragmentManager.beginTransaction()
-                                .replace(fragmentContainerId, fragment, tag)
-                                .commit()
-                        mFragmentManager.executePendingTransactions()
+                        openSavesFragment()
                     }
                     R.id.navigation_dashboard -> {
                         openPlacesFragment()
                     }
                     R.id.navigation_notifications -> {
-                        tag = TAG_SETTINGS_FRAG
-
-                        fragment = mFragmentManager.findFragmentByTag(tag)
-                        if (fragment == null) {
-                            fragment = SettingsFragment()
-                        }
-                        mFragmentManager.beginTransaction()
-                                .replace(fragmentContainerId, fragment, tag)
-                                .commit()
-                        mFragmentManager.executePendingTransactions()
+                        openPreferenceFragment()
                     }
                 }
                 return@OnNavigationItemSelectedListener true
@@ -126,24 +106,9 @@ class MainActivity : FragmentActivity() {
     private fun setFabVisibility() {
         if (PlacesController.getNumberOfPlaces() == 0) {
             mFabAnimator.hideSecondFab()
+            mFabAnimator.showInitialFab()
         } else {
             mFabAnimator.showSecondFab()
-        }
-    }
-
-    private fun openPlacePickerIntent() {
-        // Open PlacePicker Intent.
-        try {
-            val intentBuilder = PlacePicker.IntentBuilder()
-            val intent = intentBuilder.build(this)
-            // Start the Intent by requesting a result, identified by a request code.
-            startActivityForResult(intent, REQUEST_PLACE_PICKER)
-        } catch (e: GooglePlayServicesRepairableException) {
-            GoogleApiAvailability.getInstance().getErrorDialog(this,
-                    e.connectionStatusCode, 0)
-        } catch (e: GooglePlayServicesNotAvailableException) {
-            Toast.makeText(this, "Google Play Services is not available",
-                    Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -179,28 +144,63 @@ class MainActivity : FragmentActivity() {
         }
     }
 
+
+    private fun openPlacePickerIntent() {
+        // Open PlacePicker Intent.
+        try {
+            val intentBuilder = PlacePicker.IntentBuilder()
+            val intent = intentBuilder.build(this)
+            // Start the Intent by requesting a result, identified by a request code.
+            startActivityForResult(intent, REQUEST_PLACE_PICKER)
+        } catch (e: GooglePlayServicesRepairableException) {
+            GoogleApiAvailability.getInstance().getErrorDialog(this,
+                    e.connectionStatusCode, 0)
+        } catch (e: GooglePlayServicesNotAvailableException) {
+            Toast.makeText(this, "Google Play Services is not available",
+                    Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openSavesFragment() {
+        var fragment = mFragmentManager.findFragmentByTag(TAG_SAVED_FRAG)
+        if (fragment == null) {
+            fragment = ItemFragment()
+        }
+        mFragmentManager.beginTransaction()
+                .replace(fragmentContainerId, fragment, TAG_SAVED_FRAG)
+                .commit()
+        mFragmentManager.executePendingTransactions()
+    }
+
     private fun openPlacesFragment() {
         mFragmentManager.executePendingTransactions()
         var fragment: Fragment? = mFragmentManager.findFragmentByTag(PlacePickerFragment.TAG)
         if (fragment == null) {
             fragment = PlacePickerFragment.getInstance()
 
-
             mFabStart.setOnClickListener({
                 openGeoFragment()
             })
-            mFragmentManager.beginTransaction().replace(fragmentContainerId, fragment,
-                    PlacePickerFragment.TAG)
-                    .addToBackStack(PlacePickerFragment.TAG).commit()
-            return
+        } else {
+            setFabVisibility()
         }
 
         mFragmentManager.beginTransaction()
                 .replace(fragmentContainerId, fragment, PlacePickerFragment.TAG)
                 .addToBackStack(PlacePickerFragment.TAG)
                 .commit()
+    }
 
-        setFabVisibility()
+    private fun openPreferenceFragment(){
+        mFabAnimator.hideFabs()
+        var fragment = mFragmentManager.findFragmentByTag(TAG_SETTINGS_FRAG)
+        if (fragment == null) {
+            fragment = SettingsFragment()
+        }
+        mFragmentManager.beginTransaction()
+                .replace(fragmentContainerId, fragment, TAG_SETTINGS_FRAG)
+                .commit()
+        mFragmentManager.executePendingTransactions()
     }
 
     private fun openGeoFragment() {

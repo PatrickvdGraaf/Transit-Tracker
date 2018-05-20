@@ -13,7 +13,7 @@ import android.os.Bundle
 import android.os.IBinder
 import com.crepetete.transittracker.models.intent.broadcast.GeofenceBroadCastReceiver
 import com.crepetete.transittracker.models.notification.GeofenceServiceNotification
-import com.crepetete.transittracker.models.notification.`super`.GeofenceNotification
+import com.crepetete.transittracker.models.notification.base.GeofenceNotification
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient

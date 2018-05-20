@@ -37,7 +37,7 @@ class LocaleHelper {
          * @param context For getting the users Locale.
          * @return Locale
          */
-        fun stringToLocale(s: String, context: Context): Locale {
+        fun stringToLocale(context: Context, s: String): Locale {
             val userLocale = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 context.resources.configuration.locales.get(0)
             } else {

@@ -1,4 +1,4 @@
-package com.crepetete.transittracker.models.notification.`super`
+package com.crepetete.transittracker.models.notification.base
 
 import android.annotation.TargetApi
 import android.app.Notification
@@ -68,6 +68,7 @@ abstract class GeofenceNotification : Notification {
         return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             Builder(mContext, mChannelId).setChannelId(mChannelId)
         } else {
+            @Suppress("DEPRECATION")
             Builder(mContext)
         }
     }

@@ -7,13 +7,14 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.drawable.Icon
 import android.os.Build
 import android.support.annotation.RequiresApi
 import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import com.crepetete.transittracker.R
 import com.crepetete.transittracker.models.intent.broadcast.GeofenceBroadCastReceiver
-import com.crepetete.transittracker.models.notification.`super`.GeofenceNotification
+import com.crepetete.transittracker.models.notification.base.GeofenceNotification
 import com.crepetete.transittracker.views.activities.main.MainActivity
 
 class GeofenceServiceNotification(context: Context) : GeofenceNotification(context) {
@@ -76,8 +77,14 @@ class GeofenceServiceNotification(context: Context) : GeofenceNotification(conte
 //        val removePendingIntent = PendingIntent.getBroadcast(context, 0,
 //                removeIntent, 0)
 
-        val stopAction = Notification.Action.Builder(R.drawable.ic_stop_24dp, "Stop",
-                GeofenceBroadCastReceiver.getStopIntent(mContext)).build()
+        val stopAction = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            Notification.Action.Builder(Icon.createWithResource(mContext, R.drawable.ic_stop_24dp), "Stop",
+                    GeofenceBroadCastReceiver.getStopIntent(mContext)).build()
+        } else {
+            @Suppress("DEPRECATION")
+            Notification.Action.Builder(R.drawable.ic_stop_24dp, "Stop",
+                    GeofenceBroadCastReceiver.getStopIntent(mContext)).build()
+        }
 
         // Define the notification settings
         return super.getBuilder(notificationManager)

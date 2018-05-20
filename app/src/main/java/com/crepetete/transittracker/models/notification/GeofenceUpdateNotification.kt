@@ -11,7 +11,7 @@ import android.support.annotation.RequiresApi
 import android.support.v4.app.TaskStackBuilder
 import android.support.v4.content.ContextCompat
 import com.crepetete.transittracker.R
-import com.crepetete.transittracker.models.notification.`super`.GeofenceNotification
+import com.crepetete.transittracker.models.notification.base.GeofenceNotification
 import com.crepetete.transittracker.views.activities.main.MainActivity
 
 class GeofenceUpdateNotification(context: Context,
@@ -19,7 +19,6 @@ class GeofenceUpdateNotification(context: Context,
                                  private val mText: String)
     : GeofenceNotification(context) {
     @TargetApi(Build.VERSION_CODES.O)
-//    override var mChannelId: String = CHANNEL_GEOFENCE_UPDATE
     override var mChannelId: String = "CHANNEL_ID"
 
     @RequiresApi(Build.VERSION_CODES.N)

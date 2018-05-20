@@ -3,6 +3,10 @@ package com.crepetete.transittracker.models.place
 import android.content.Context
 import android.preference.PreferenceManager
 import com.crepetete.transittracker.R
+import com.crepetete.transittracker.config.locale.LocaleHelper
+import com.crepetete.transittracker.models.database.DatabaseBitmapUtility
+import com.crepetete.transittracker.models.database.DatabaseWorkerThread
+import com.crepetete.transittracker.models.database.PlaceDatabase
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.places.GeoDataClient
 
@@ -14,18 +18,55 @@ object PlacesController {
     private val mListeners = hashMapOf<String, PlacesListener>()
     private val mPlaces: MutableList<ParcelablePlace> = mutableListOf()
 
-    /**
-     * Creates a List of Geofences from all Places in mPlaces
-     */
+    private var mDatabase: PlaceDatabase? = null
+
+    private var mDatabaseWorkerThread = DatabaseWorkerThread("databaseWorkerThread")
+
+    fun savePlace(context: Context, place: ParcelablePlace) {
+        if (!mDatabaseWorkerThread.isAlive) {
+            mDatabaseWorkerThread.start()
+        }
+
+        mDatabase = PlaceDatabase.getInstance(context)
+
+        val placeData = PlaceData()
+        placeData.id = place.id
+        placeData.name = place.name
+        placeData.address = place.address
+        placeData.latitude = place.latLng.latitude
+        placeData.longitude = place.latLng.longitude
+        placeData.locale = LocaleHelper.localeToString(place.locale)
+        placeData.website = place.website.toString()
+        placeData.attributions = place.attributions
+
+        val image = place.getImage()
+        if (image != null) {
+            val byteArray = DatabaseBitmapUtility.getBytes(image)
+            if (byteArray != null) {
+                placeData.image = byteArray
+            }
+        }
+
+        val task = Runnable { mDatabase?.placeDataDao()?.insert(placeData) }
+        mDatabaseWorkerThread.postTask(task)
+    }
+
+    fun deletePlace(context: Context, id: String){
+        if (!mDatabaseWorkerThread.isAlive) {
+            mDatabaseWorkerThread.start()
+        }
+
+        mDatabase = PlaceDatabase.getInstance(context)
+
+        val task = Runnable { mDatabase?.placeDataDao()?.delete(id) }
+        mDatabaseWorkerThread.postTask(task)
+    }
+
     /**
      * Creates a List of Geofences from all Places in mPlaces
      */
     fun getGeofenceObjects(context: Context): List<Geofence> {
-        val geofences = arrayListOf<Geofence>()
-        for (place in mPlaces) {
-            geofences.add(fromParcelablePlace(context, place))
-        }
-        return geofences
+        return mPlaces.map { fromParcelablePlace(context, it) }
     }
 
     /**
@@ -59,12 +100,11 @@ object PlacesController {
 
     fun getGeofenceRadiusFromPrefs(context: Context): Float {
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        val radius = prefs.getString(context.getString(R.string.pref_geofence_radius),
+        return prefs.getString(context.getString(R.string.pref_geofence_radius),
                 "500").toFloat()
-        return radius
     }
 
-    fun getImageForPlace(id: String, geoDataClient: GeoDataClient) {
+    fun loadImageForPlace(id: String, geoDataClient: GeoDataClient) {
         val imagePosition = getPositionForId(id)
         if (imagePosition != -1) {
             geoDataClient.getPlacePhotos(id).addOnCompleteListener { task ->

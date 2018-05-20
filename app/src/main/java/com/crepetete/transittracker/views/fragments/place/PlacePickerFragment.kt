@@ -1,6 +1,7 @@
 package com.crepetete.transittracker.views.fragments.place
 
 import android.os.Bundle
+import android.os.Parcelable
 import android.support.v4.app.Fragment
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
@@ -9,6 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.crepetete.transittracker.R
+import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.place.adapter.viewholder.adapter.PlacesAdapter
 import com.google.android.gms.location.places.Place
 import com.google.android.gms.location.places.ui.PlacePicker
@@ -25,35 +27,58 @@ import com.google.android.gms.location.places.ui.PlacePicker
 class PlacePickerFragment : Fragment() {
     companion object {
         const val TAG = "PlacePickerFragment"
+        private const val KEY_LIST_STATE = "KEY_LIST_STATE"
 
         fun getInstance(): PlacePickerFragment {
             return PlacePickerFragment()
         }
     }
 
-    private lateinit var mRecyclerView: RecyclerView
-    private var mAdapter: PlacesAdapter = PlacesAdapter()
+    private lateinit var mLayoutManager: RecyclerView.LayoutManager
+    private lateinit var mAdapter: PlacesAdapter
+    private var mListState: Parcelable? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_places, container, false)
-    }
+        val view = inflater.inflate(R.layout.fragment_places, container, false)
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        mRecyclerView = view.findViewById(R.id.recycler_view)
-        mRecyclerView.layoutManager = LinearLayoutManager(context)
+        val mRecyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
+
+        mLayoutManager = LinearLayoutManager(context)
+        mRecyclerView.layoutManager = mLayoutManager
+
         mRecyclerView.itemAnimator = DefaultItemAnimator()
+        mAdapter = context?.let { PlacesAdapter(it, PlacesController.getPlaces()) }!!
         mRecyclerView.adapter = mAdapter
+
+        return view
     }
 
     override fun onResume() {
         super.onResume()
+
+        if (mListState != null) {
+            mLayoutManager.onRestoreInstanceState(mListState)
+        }
         mAdapter.onResume()
     }
 
     override fun onStop() {
         super.onStop()
         mAdapter.onStop()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        mListState = mLayoutManager.onSaveInstanceState()
+        outState.putParcelable(KEY_LIST_STATE, mListState)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            mListState = savedInstanceState.getParcelable(KEY_LIST_STATE)
+        }
     }
 }

@@ -1,5 +1,6 @@
 package com.crepetete.transittracker.models.place.adapter.viewholder.adapter
 
+import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -13,8 +14,10 @@ import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Places
 
 
-class PlacesAdapter : PlacesListener, RecyclerView.Adapter<PlaceViewHolder>() {
-    private val mPlaces: List<ParcelablePlace> = PlacesController.getPlaces()
+class PlacesAdapter(private val mContext: Context, private val mPlaces: List<ParcelablePlace> = listOf(),
+                    private val mIsPrivateDataSet: Boolean = false) : PlacesListener,
+        RecyclerView.Adapter<PlaceViewHolder>() {
+
     private var mGeoDataClient: GeoDataClient? = null
 
     override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
@@ -29,8 +32,8 @@ class PlacesAdapter : PlacesListener, RecyclerView.Adapter<PlaceViewHolder>() {
             mGeoDataClient = Places.getGeoDataClient(parent.context)
         }
 
-        return PlaceViewHolder(LayoutInflater.from(parent.context)
-                .inflate(R.layout.card_place, parent, false))
+        return PlaceViewHolder(mContext, LayoutInflater.from(parent.context)
+                .inflate(R.layout.card_place, parent, false), mIsPrivateDataSet)
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
