@@ -11,7 +11,7 @@ import com.crepetete.transittracker.models.place.PlaceData
  * Created by Patrick van de Graaf on 5/18/2018.
  *
  */
-@Database(entities = [(PlaceData::class)], version = 1)
+@Database(entities = [(PlaceData::class)], version = 1, exportSchema = false)
 abstract class PlaceDatabase : RoomDatabase() {
     abstract fun placeDataDao(): PlaceDataDao
 

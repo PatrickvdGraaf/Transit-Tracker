@@ -1,6 +1,7 @@
 package com.crepetete.transittracker.models.database
 
 import android.arch.persistence.room.Dao
+import android.arch.persistence.room.Delete
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.Query
@@ -19,8 +20,8 @@ interface PlaceDataDao {
     @Insert(onConflict = REPLACE)
     fun insert(placeData: PlaceData)
 
-    @Query("DELETE from places WHERE id IS :placeId")
-    fun delete(placeId: String)
+    @Delete
+    fun delete(place: PlaceData)
 
     @Query("DELETE from places")
     fun deleteAll()

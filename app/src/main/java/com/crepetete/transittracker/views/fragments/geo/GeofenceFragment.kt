@@ -29,7 +29,7 @@ import com.crepetete.transittracker.R
 import com.crepetete.transittracker.config.Constants
 import com.crepetete.transittracker.models.intent.broadcast.GeofenceBroadCastReceiver
 import com.crepetete.transittracker.models.intent.service.GeofenceService
-import com.crepetete.transittracker.models.place.ParcelablePlace
+import com.crepetete.transittracker.models.place.PlaceData
 import com.crepetete.transittracker.models.place.PlacesController
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -81,7 +81,7 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
 
     private var mLastLocation: Location? = null
 
-    private val mHashMap: HashMap<Marker, ParcelablePlace> = hashMapOf()
+    private val mHashMap: HashMap<Marker, PlaceData> = hashMapOf()
 
     private val mGoogleApiClient: GoogleApiClient by lazy {
         GoogleApiClient.Builder(context!!)
@@ -384,7 +384,7 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
         for (place in places) {
             markerForGeofence(place)
             val circleOptions = CircleOptions()
-                    .center(place.latLng)
+                    .center(place.getLatLng())
                     .strokeColor(ColorUtils.setAlphaComponent(ContextCompat.getColor(context!!,
                             com.crepetete.transittracker.R.color.colorPrimaryDark),
                             100))
@@ -399,11 +399,11 @@ abstract class GeofenceFragment : Fragment(), GoogleApiClient.ConnectionCallback
 //        centerOnGeofences()
     }
 
-    private fun markerForGeofence(parcelablePlace: ParcelablePlace) {
+    private fun markerForGeofence(parcelablePlace: PlaceData) {
         val hsv = FloatArray(3)
         Color.colorToHSV(ContextCompat.getColor(context!!, R.color.colorPrimaryDark), hsv)
         val markerOptions = MarkerOptions()
-                .position(parcelablePlace.latLng)
+                .position(parcelablePlace.getLatLng())
                 .icon(BitmapDescriptorFactory.defaultMarker(hsv[0]))
                 .title(parcelablePlace.name)
                 .snippet(parcelablePlace.address)

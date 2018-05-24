@@ -111,6 +111,7 @@ class GeoLocationService : Service(), GoogleApiClient.ConnectionCallbacks,
         if (mGoogleApiClient.isConnected) {
             mGoogleApiClient.disconnect()
         }
+        stopLocationUpdates()
     }
 
     fun broadcastLocationFound(location: Location) {
@@ -124,11 +125,11 @@ class GeoLocationService : Service(), GoogleApiClient.ConnectionCallbacks,
     }
 
     @SuppressLint("MissingPermission")
-    fun startLocationUpdates() {
+    private fun startLocationUpdates() {
         mFusedLocationClient.requestLocationUpdates(mLocationRequest, LocationCallback(), null)
     }
 
-    fun stopLocationUpdates() {
+    private fun stopLocationUpdates() {
         mFusedLocationClient.removeLocationUpdates(LocationCallback())
     }
 

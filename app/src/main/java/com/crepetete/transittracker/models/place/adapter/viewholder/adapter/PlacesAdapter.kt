@@ -2,42 +2,51 @@ package com.crepetete.transittracker.models.place.adapter.viewholder.adapter
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
-import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
-import com.crepetete.transittracker.R
-import com.crepetete.transittracker.models.place.ParcelablePlace
+import com.crepetete.transittracker.models.place.PlaceData
 import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.place.PlacesListener
+import com.crepetete.transittracker.models.place.adapter.viewholder.ListPlaceViewHolder
 import com.crepetete.transittracker.models.place.adapter.viewholder.PlaceViewHolder
+import com.crepetete.transittracker.models.place.adapter.viewholder.SavedPlaceViewHolder
 import com.crepetete.transittracker.views.fragments.place.PlacePickerFragment
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Places
 
-
-class PlacesAdapter(private val mContext: Context, private val mPlaces: List<ParcelablePlace> = listOf(),
-                    private val mIsPrivateDataSet: Boolean = false) : PlacesListener,
+class PlacesAdapter(private val mContext: Context,
+                    private var mPlaces: MutableList<PlaceData> = mutableListOf(),
+                    private val mContainer: View? = null,
+                    private val isPrivateDataSet: Boolean = false) : PlacesListener,
         RecyclerView.Adapter<PlaceViewHolder>() {
 
     private var mGeoDataClient: GeoDataClient? = null
 
-    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
-        super.onDetachedFromRecyclerView(recyclerView)
-        if (mGeoDataClient != null) {
-            mGeoDataClient = null
-        }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PlaceViewHolder {
         if (mGeoDataClient == null) {
-            mGeoDataClient = Places.getGeoDataClient(parent.context)
+            mGeoDataClient = Places.getGeoDataClient(mContext)
         }
 
-        return PlaceViewHolder(mContext, LayoutInflater.from(parent.context)
-                .inflate(R.layout.card_place, parent, false), mIsPrivateDataSet)
+        return if (isPrivateDataSet) {
+            SavedPlaceViewHolder(mContext, parent, mContainer, { position ->
+                mPlaces.removeAt(position)
+                onPlaceRemoved(position)
+            })
+        } else {
+            ListPlaceViewHolder(mContext, parent, { position ->
+                mPlaces.removeAt(position)
+                onPlaceRemoved(position)
+            })
+        }
     }
 
     override fun onBindViewHolder(holder: PlaceViewHolder, position: Int) {
         holder.setPlace(mPlaces[position], mGeoDataClient)
+    }
+
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView) {
+        super.onDetachedFromRecyclerView(recyclerView)
+        mGeoDataClient = null
     }
 
     override fun getItemCount(): Int {
@@ -58,6 +67,9 @@ class PlacesAdapter(private val mContext: Context, private val mPlaces: List<Par
 
     fun onResume() {
         PlacesController.addListener(this)
+        if (!isPrivateDataSet) {
+            mPlaces = PlacesController.getPlaces().toMutableList()
+        }
     }
 
     fun onStop() {

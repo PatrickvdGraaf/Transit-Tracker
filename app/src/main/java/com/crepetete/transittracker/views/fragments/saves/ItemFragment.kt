@@ -10,10 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import com.crepetete.transittracker.R
-import com.crepetete.transittracker.models.database.DatabaseWorkerThread
 import com.crepetete.transittracker.models.database.PlaceDatabase
-import com.crepetete.transittracker.models.place.ParcelablePlace
 import com.crepetete.transittracker.models.place.PlaceData
+import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.place.adapter.viewholder.adapter.PlacesAdapter
 import timber.log.Timber
 
@@ -23,41 +22,37 @@ import timber.log.Timber
  * [ItemFragment.OnListFragmentInteractionListener] interface.
  */
 class ItemFragment : Fragment() {
-    private var mDatabase: PlaceDatabase? = null
-
-    private lateinit var mDbWorkerThread: DatabaseWorkerThread
-
     private val mUiHandler = Handler()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+    private var mPlaces = listOf<PlaceData>()
 
-        mDbWorkerThread = DatabaseWorkerThread("dbWorkerThread")
-        mDbWorkerThread.start()
-    }
+    private var mPlaceAdapter: PlacesAdapter? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
+        return inflater.inflate(R.layout.fragment_item_list, container, false)
+    }
 
-        val c = context
-        if (c != null) {
-            mDatabase = PlaceDatabase.getInstance(c)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            val task = Runnable {
-                val placeData = mDatabase?.placeDataDao()?.getAll()
-                mUiHandler.post({
-                    if (placeData == null || placeData.isEmpty()) {
-                        Toast.makeText(c, "No data in cache..!!", Toast.LENGTH_SHORT).show()
-                    } else {
-                        onPlacesReceived(view, placeData)
-                    }
-                })
+        PlacesController.getAllFromDatabase({
+            if (mPlaces != it) {
+                mPlaces = it
+                mPlaceAdapter?.notifyDataSetChanged()
+                setUI(view)
             }
-            mDbWorkerThread.postTask(task)
-        }
+        })
+    }
 
-        return view
+    private fun setUI(view: View) {
+        mUiHandler.post({
+            if (mPlaces.isEmpty()) {
+                Toast.makeText(context, "No data in cache..!!", Toast.LENGTH_SHORT).show()
+            } else {
+                onPlacesReceived(view, mPlaces)
+            }
+        })
     }
 
     private fun onPlacesReceived(view: View, placeData: List<PlaceData>) {
@@ -66,16 +61,17 @@ class ItemFragment : Fragment() {
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
-                layoutManager =  LinearLayoutManager(context)
-                adapter = PlacesAdapter(context, placeData.map { ParcelablePlace(it) },
+                mPlaceAdapter = PlacesAdapter(context, placeData.toMutableList(), view,
                         true)
+
+                layoutManager = LinearLayoutManager(context)
+                adapter = mPlaceAdapter
             }
         }
     }
 
     override fun onDestroy() {
         PlaceDatabase.destroyInstance()
-        mDbWorkerThread.quit()
         super.onDestroy()
     }
 }

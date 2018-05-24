@@ -7,15 +7,13 @@ import android.support.constraint.ConstraintSet
 import android.support.design.widget.FloatingActionButton
 import android.transition.ChangeBounds
 import android.transition.TransitionManager
-import android.view.View
 import android.view.animation.OvershootInterpolator
 import com.crepetete.transittracker.R
 
 open class FabAnimator(
         context: Context,
         @Size(min = 1) private val mFabs: Array<FloatingActionButton>,
-        private val mConstraintLayout: ConstraintLayout,
-        private val mAnchorView: View) {
+        private val mConstraintLayout: ConstraintLayout) {
 
     private var mFirstFabVisible = false
     private var mSecondFabVisible = false
@@ -33,7 +31,7 @@ open class FabAnimator(
         constraintSet.clone(mConstraintLayout)
 
         constraintSet.clear(fab.id, ConstraintSet.TOP)
-        constraintSet.connect(fab.id, ConstraintSet.BOTTOM, mAnchorView.id, ConstraintSet.TOP,
+        constraintSet.connect(fab.id, ConstraintSet.BOTTOM, mConstraintLayout.id, ConstraintSet.BOTTOM,
                 mMargin)
 
         val transition = ChangeBounds()
@@ -60,8 +58,8 @@ open class FabAnimator(
                     ConstraintSet.TOP)
 
             constraintSet.clear(secondFab.id, ConstraintSet.TOP)
-            constraintSet.connect(secondFab.id, ConstraintSet.BOTTOM, mAnchorView.id,
-                    ConstraintSet.TOP, mMargin)
+            constraintSet.connect(secondFab.id, ConstraintSet.BOTTOM, mConstraintLayout.id,
+                    ConstraintSet.BOTTOM, mMargin)
 
             val transition = ChangeBounds()
             transition.interpolator = OvershootInterpolator()
@@ -109,8 +107,8 @@ open class FabAnimator(
             val constraintSet = ConstraintSet()
             constraintSet.clone(mConstraintLayout)
 
-            constraintSet.connect(firstFab.id, ConstraintSet.BOTTOM, mAnchorView.id,
-                    ConstraintSet.TOP, mMargin)
+            constraintSet.connect(firstFab.id, ConstraintSet.BOTTOM, mConstraintLayout.id,
+                    ConstraintSet.BOTTOM, mMargin)
 
             constraintSet.clear(secondFab.id, ConstraintSet.BOTTOM)
             constraintSet.connect(secondFab.id, ConstraintSet.TOP, mConstraintLayout.id,

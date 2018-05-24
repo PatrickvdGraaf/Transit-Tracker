@@ -5,5 +5,7 @@
     android:name="com.crepetete.transittracker.views.fragments.saves.ItemFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingBottom="8dp"
+    android:paddingTop="8dp"
     tools:context=".views.fragments.saves.ItemFragment"
     tools:listitem="@layout/fragment_item" />

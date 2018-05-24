@@ -2,13 +2,13 @@ package com.crepetete.transittracker.models.place
 
 import android.content.Context
 import android.preference.PreferenceManager
+import android.widget.Toast
 import com.crepetete.transittracker.R
-import com.crepetete.transittracker.config.locale.LocaleHelper
-import com.crepetete.transittracker.models.database.DatabaseBitmapUtility
 import com.crepetete.transittracker.models.database.DatabaseWorkerThread
 import com.crepetete.transittracker.models.database.PlaceDatabase
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.places.GeoDataClient
+import timber.log.Timber
 
 object PlacesController {
     private const val GEOFENCE_EXPIRATION_IN_HOURS = 1L
@@ -16,50 +16,47 @@ object PlacesController {
             GEOFENCE_EXPIRATION_IN_HOURS * 60 * 60 * 1000
 
     private val mListeners = hashMapOf<String, PlacesListener>()
-    private val mPlaces: MutableList<ParcelablePlace> = mutableListOf()
+    private val mPlaces: MutableList<PlaceData> = mutableListOf()
 
     private var mDatabase: PlaceDatabase? = null
 
-    private var mDatabaseWorkerThread = DatabaseWorkerThread("databaseWorkerThread")
+    private var mDatabaseWorkerThread = DatabaseWorkerThread()
 
-    fun savePlace(context: Context, place: ParcelablePlace) {
-        if (!mDatabaseWorkerThread.isAlive) {
-            mDatabaseWorkerThread.start()
-        }
-
-        mDatabase = PlaceDatabase.getInstance(context)
-
-        val placeData = PlaceData()
-        placeData.id = place.id
-        placeData.name = place.name
-        placeData.address = place.address
-        placeData.latitude = place.latLng.latitude
-        placeData.longitude = place.latLng.longitude
-        placeData.locale = LocaleHelper.localeToString(place.locale)
-        placeData.website = place.website.toString()
-        placeData.attributions = place.attributions
-
-        val image = place.getImage()
-        if (image != null) {
-            val byteArray = DatabaseBitmapUtility.getBytes(image)
-            if (byteArray != null) {
-                placeData.image = byteArray
-            }
-        }
-
-        val task = Runnable { mDatabase?.placeDataDao()?.insert(placeData) }
-        mDatabaseWorkerThread.postTask(task)
+    // Local
+    fun addPlace(place: PlaceData) {
+        mPlaces.add(place)
+        notifyListeners(getNumberOfPlaces())
     }
 
-    fun deletePlace(context: Context, id: String){
-        if (!mDatabaseWorkerThread.isAlive) {
-            mDatabaseWorkerThread.start()
-        }
+    fun removePlace(id: String) {
+        val position = getPositionForId(id)
+        mPlaces.removeAt(position)
+        notifyRemoval(position)
+    }
 
-        mDatabase = PlaceDatabase.getInstance(context)
+    // Database
+    fun insertPlace(context: Context, place: PlaceData) {
+        mDatabaseWorkerThread.postTask(Runnable {
+            mDatabase?.placeDataDao()?.insert(place)
+            Toast.makeText(context, "Successfully saved ${place.name}", Toast.LENGTH_SHORT)
+                    .show()
+        })
+    }
 
-        val task = Runnable { mDatabase?.placeDataDao()?.delete(id) }
-        mDatabaseWorkerThread.postTask(task)
+    fun deletePlace(context: Context, place: PlaceData) {
+        mDatabaseWorkerThread.postTask(Runnable {
+            mDatabase?.placeDataDao()?.delete(place)
+            Toast.makeText(context, "Successfully deleted ${place.name}", Toast.LENGTH_SHORT)
+                    .show()
+        })
+    }
+
+    fun getAllFromDatabase(onComplete: (List<PlaceData>) -> Unit = {
+        Timber.d("No onComplete set for getAllFromDatabase()")
+    }) {
+        mDatabaseWorkerThread.postTask(Runnable {
+            mDatabase?.placeDataDao()?.getAll()?.let { onComplete(it) }
+        })
     }
 
     /**
@@ -72,7 +69,7 @@ object PlacesController {
     /**
      * Build a Geofence object for a specific place
      */
-    private fun fromParcelablePlace(context: Context, place: ParcelablePlace): Geofence {
+    private fun fromParcelablePlace(context: Context, place: PlaceData): Geofence {
         return Geofence.Builder()
                 // Set the request ID of the geofence. This is a string to identify this
                 // geofence.
@@ -81,8 +78,8 @@ object PlacesController {
                 // Set the circular region of this geofence.
                 // Recommended value is a 100 meters for most situations. If the geofence is in the
                 // countryside, 500 meters could be used.
-                .setCircularRegion(place.latLng.latitude,
-                        place.latLng.longitude,
+                .setCircularRegion(place.latitude,
+                        place.longitude,
                         getGeofenceRadiusFromPrefs(context)
                 )
                 // Set the expiration duration of the geofence. This geofence gets automatically
@@ -121,7 +118,7 @@ object PlacesController {
                         if (photoTask.isSuccessful) {
                             val place = getPlaceForId(id)
                             if (place != null) {
-                                place.setImage(photoTask.result.bitmap)
+                                place.setBitmap(photoTask.result.bitmap)
                                 notifyListeners(imagePosition)
                             }
                         }
@@ -143,30 +140,19 @@ object PlacesController {
         }
     }
 
-    fun addPlace(place: ParcelablePlace) {
-        mPlaces.add(place)
-        notifyListeners(getNumberOfPlaces())
-    }
-
     fun addListener(listener: PlacesListener) {
         mListeners[listener.getListenerTag()] = listener
-    }
-
-    fun removePlace(id: String) {
-        val position = getPositionForId(id)
-        mPlaces.removeAt(position)
-        notifyRemoval(position)
     }
 
     fun removeListener(tag: String) {
         mListeners.remove(tag)
     }
 
-    fun getPlaces(): List<ParcelablePlace> {
+    fun getPlaces(): List<PlaceData> {
         return mPlaces
     }
 
-    private fun getPlaceForId(id: String): ParcelablePlace? {
+    private fun getPlaceForId(id: String): PlaceData? {
         for (place in mPlaces) {
             if (place.id == id) {
                 return place
@@ -190,5 +176,15 @@ object PlacesController {
 
     fun isEmpty(): Boolean {
         return mPlaces.isEmpty()
+    }
+
+    fun onStart(context: Context) {
+        mDatabase = PlaceDatabase.getInstance(context)
+        mDatabaseWorkerThread.start()
+    }
+
+    fun onStop() {
+        mDatabaseWorkerThread.quit()
+        PlaceDatabase.destroyInstance()
     }
 }
