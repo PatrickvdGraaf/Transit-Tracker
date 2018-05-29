@@ -95,10 +95,12 @@ object PlacesController {
                 .build()
     }
 
-    fun getGeofenceRadiusFromPrefs(context: Context): Float {
+    fun getGeofenceRadiusFromPrefs(context: Context?): Float {
+        if (context == null) {
+            return 500F
+        }
         val prefs = PreferenceManager.getDefaultSharedPreferences(context)
-        return prefs.getString(context.getString(R.string.pref_geofence_radius),
-                "500").toFloat()
+        return prefs.getString(context.getString(R.string.pref_geofence_radius), "500").toFloat()
     }
 
     fun loadImageForPlace(id: String, geoDataClient: GeoDataClient) {

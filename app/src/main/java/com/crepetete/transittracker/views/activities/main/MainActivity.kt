@@ -36,20 +36,35 @@ class MainActivity : AppCompatActivity() {
 
     private val mOnNavigationItemSelectedListener = BottomNavigationView
             .OnNavigationItemSelectedListener { item ->
-                if (item.itemId != R.id.navigation_dashboard) {
-                }
-
+                val transaction = mFragmentManager.beginTransaction()
                 when (item.itemId) {
                     R.id.navigation_home -> {
-                        openSavesFragment()
+                        var fragment = mFragmentManager.findFragmentByTag(TAG_SAVED_FRAG)
+                        if (fragment == null) {
+                            fragment = ItemFragment()
+                        }
+                        transaction.replace(fragmentContainerId, fragment, TAG_SAVED_FRAG)
+//                        mFragmentManager.executePendingTransactions()
                     }
                     R.id.navigation_dashboard -> {
-                        openPlacesFragment()
+                        mFragmentManager.executePendingTransactions()
+                        var fragment: Fragment? = mFragmentManager.findFragmentByTag(PlacePickerFragment.TAG)
+                        if (fragment == null) {
+                            fragment = PlacePickerFragment.getInstance()
+                        }
+                        transaction.replace(fragmentContainerId, fragment, PlacePickerFragment.TAG)
+                                .addToBackStack(PlacePickerFragment.TAG)
                     }
                     R.id.navigation_notifications -> {
-                        openPreferenceFragment()
+                        var fragment = mFragmentManager.findFragmentByTag(TAG_SETTINGS_FRAG)
+                        if (fragment == null) {
+                            fragment = SettingsFragment()
+                        }
+                        transaction.replace(fragmentContainerId, fragment, TAG_SETTINGS_FRAG)
+//                        mFragmentManager.executePendingTransactions()
                     }
                 }
+                transaction.commit()
                 return@OnNavigationItemSelectedListener true
             }
 
@@ -57,59 +72,21 @@ class MainActivity : AppCompatActivity() {
         setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        PlacesController.onStart(this)
 
         mNavigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener)
         mOnNavigationItemSelectedListener.onNavigationItemSelected(mNavigation.menu.getItem(1))
         mNavigation.menu.getItem(1).isChecked = true
     }
 
-    override fun onBackPressed() {
-        super.onBackPressed()
-    }
-
     override fun onStart() {
         super.onStart()
-        PlacesController.onStart(this)
     }
 
     override fun onDestroy() {
         stopService(Intent(this, GeofenceService::class.java))
         PlacesController.onStop()
         super.onDestroy()
-    }
-
-    private fun openSavesFragment() {
-        var fragment = mFragmentManager.findFragmentByTag(TAG_SAVED_FRAG)
-        if (fragment == null) {
-            fragment = ItemFragment()
-        }
-        mFragmentManager.beginTransaction()
-                .replace(fragmentContainerId, fragment, TAG_SAVED_FRAG)
-                .commit()
-        mFragmentManager.executePendingTransactions()
-    }
-
-    private fun openPlacesFragment() {
-        mFragmentManager.executePendingTransactions()
-        var fragment: Fragment? = mFragmentManager.findFragmentByTag(PlacePickerFragment.TAG)
-        if (fragment == null) {
-            fragment = PlacePickerFragment.getInstance()
-        }
-        mFragmentManager.beginTransaction()
-                .replace(fragmentContainerId, fragment, PlacePickerFragment.TAG)
-                .addToBackStack(PlacePickerFragment.TAG)
-                .commit()
-    }
-
-    private fun openPreferenceFragment() {
-        var fragment = mFragmentManager.findFragmentByTag(TAG_SETTINGS_FRAG)
-        if (fragment == null) {
-            fragment = SettingsFragment()
-        }
-        mFragmentManager.beginTransaction()
-                .replace(fragmentContainerId, fragment, TAG_SETTINGS_FRAG)
-                .commit()
-        mFragmentManager.executePendingTransactions()
     }
 
     private fun showBottomNavBar() {

@@ -1,10 +1,8 @@
 package com.crepetete.transittracker.models.place.adapter.viewholder
 
-import android.animation.LayoutTransition
 import android.content.Context
 import android.support.v7.widget.RecyclerView
 import android.view.View
-import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import com.crepetete.transittracker.R
@@ -32,15 +30,11 @@ abstract class PlaceViewHolder(
         if (image != null) {
             with(mImageBanner) {
                 setImageBitmap(image)
-                visibility = View.GONE
+                visibility = View.VISIBLE
             }
         } else {
             geoDataClient?.let {
                 mImageBanner.visibility = View.GONE
-
-                val v = mView.findViewById<ViewGroup>(R.id.card_content)
-                v.layoutTransition.enableTransitionType(LayoutTransition.CHANGING)
-
                 PlacesController.loadImageForPlace(place.id, it)
             }
         }

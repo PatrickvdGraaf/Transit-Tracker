@@ -16,12 +16,11 @@ import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.place.adapter.viewholder.adapter.PlacesAdapter
 import timber.log.Timber
 
-/**
- * A fragment representing a list of Items.
- * Activities containing this fragment MUST implement the
- * [ItemFragment.OnListFragmentInteractionListener] interface.
- */
 class ItemFragment : Fragment() {
+    companion object {
+        private const val PLACE_LIST_KEY = "PLACE_LIST_KEY"
+    }
+
     private val mUiHandler = Handler()
 
     private var mPlaces = listOf<PlaceData>()
@@ -30,28 +29,29 @@ class ItemFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_item_list, container, false)
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val view = inflater.inflate(R.layout.fragment_item_list, container, false)
+//        savedInstanceState?.let {
+//            if (it.containsKey(PLACE_LIST_KEY)) {
+//                mPlaces = it.getParcelableArrayList(PLACE_LIST_KEY)
+//            }
+//        }
 
         PlacesController.getAllFromDatabase({
-            if (mPlaces != it) {
-                mPlaces = it
-                mPlaceAdapter?.notifyDataSetChanged()
-                setUI(view)
+            mPlaces = it
+            if (it.isEmpty()) {
+                Toast.makeText(context, "No data in cache..!!", Toast.LENGTH_SHORT).show()
             }
+
+            mPlaceAdapter?.notifyDataSetChanged()
+            setUI(view)
         })
+
+        return view
     }
 
     private fun setUI(view: View) {
         mUiHandler.post({
-            if (mPlaces.isEmpty()) {
-                Toast.makeText(context, "No data in cache..!!", Toast.LENGTH_SHORT).show()
-            } else {
-                onPlacesReceived(view, mPlaces)
-            }
+            onPlacesReceived(view, mPlaces)
         })
     }
 
@@ -68,6 +68,11 @@ class ItemFragment : Fragment() {
                 adapter = mPlaceAdapter
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+//        outState.putParcelableArray(PLACE_LIST_KEY, mPlaces.toTypedArray())
+        super.onSaveInstanceState(outState)
     }
 
     override fun onDestroy() {
