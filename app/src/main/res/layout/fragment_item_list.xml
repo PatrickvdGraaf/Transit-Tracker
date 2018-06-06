@@ -9,5 +9,5 @@
     android:paddingBottom="8dp"
     android:paddingTop="8dp"
     android:scrollbars="vertical"
-    tools:context=".views.fragments.saves.ItemFragment"
+    tools:context=".views.fragments.saves.SavedPlacesFragment"
     tools:listitem="@layout/fragment_item" />

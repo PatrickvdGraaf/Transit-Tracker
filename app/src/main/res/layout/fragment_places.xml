@@ -5,7 +5,7 @@
     android:id="@+id/coordinator"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.place.PlacePickerFragment">
+    tools:context=".views.fragments.placelist.PlacePickerFragment">
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recycler_view"

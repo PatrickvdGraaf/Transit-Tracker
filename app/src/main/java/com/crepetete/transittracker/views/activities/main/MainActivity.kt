@@ -12,8 +12,8 @@ import com.crepetete.transittracker.config.AnimationHelper
 import com.crepetete.transittracker.config.bind
 import com.crepetete.transittracker.models.intent.service.GeofenceService
 import com.crepetete.transittracker.models.place.PlacesController
-import com.crepetete.transittracker.views.fragments.place.PlacePickerFragment
-import com.crepetete.transittracker.views.fragments.saves.ItemFragment
+import com.crepetete.transittracker.views.fragments.placelist.PlacePickerFragment
+import com.crepetete.transittracker.views.fragments.saves.SavedPlacesFragment
 import com.crepetete.transittracker.views.fragments.settings.SettingsFragment
 
 
@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
                     R.id.navigation_home -> {
                         var fragment = mFragmentManager.findFragmentByTag(TAG_SAVED_FRAG)
                         if (fragment == null) {
-                            fragment = ItemFragment()
+                            fragment = SavedPlacesFragment()
                         }
                         transaction.replace(fragmentContainerId, fragment, TAG_SAVED_FRAG)
 //                        mFragmentManager.executePendingTransactions()

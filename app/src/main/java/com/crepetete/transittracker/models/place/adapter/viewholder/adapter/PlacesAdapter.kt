@@ -10,7 +10,7 @@ import com.crepetete.transittracker.models.place.PlacesListener
 import com.crepetete.transittracker.models.place.adapter.viewholder.ListPlaceViewHolder
 import com.crepetete.transittracker.models.place.adapter.viewholder.PlaceViewHolder
 import com.crepetete.transittracker.models.place.adapter.viewholder.SavedPlaceViewHolder
-import com.crepetete.transittracker.views.fragments.place.PlacePickerFragment
+import com.crepetete.transittracker.views.fragments.placelist.PlacePickerFragment
 import com.google.android.gms.location.places.GeoDataClient
 import com.google.android.gms.location.places.Places
 

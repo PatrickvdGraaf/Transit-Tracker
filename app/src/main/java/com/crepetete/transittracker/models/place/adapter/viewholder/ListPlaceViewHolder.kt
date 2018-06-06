@@ -12,7 +12,7 @@ import com.crepetete.transittracker.models.place.PlacesController
 class ListPlaceViewHolder(context: Context,
                           parent: ViewGroup,
                           private val onDeleteListener: (position: Int) -> Unit)
-    : PlaceViewHolder(context, LayoutInflater.from(context).inflate(R.layout.card_place,
+    : PlaceViewHolder(context, LayoutInflater.from(context).inflate(R.layout.card_place_list,
         parent, false)) {
     override fun setOnClickListeners(view: View, place: PlaceData) {
         with(view.findViewById<FloatingActionButton>(R.id.button_remove)) {

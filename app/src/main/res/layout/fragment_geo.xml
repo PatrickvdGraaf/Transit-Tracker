@@ -5,7 +5,7 @@
     android:id="@+id/content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.fragments.geo.MyGeoFenceFragment">
+    tools:context=".views.fragments.map.MyGeoFenceFragment">
 
     <fragment
         android:id="@+id/main_branch_map"

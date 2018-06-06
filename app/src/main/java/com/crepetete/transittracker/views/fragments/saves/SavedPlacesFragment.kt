@@ -16,7 +16,7 @@ import com.crepetete.transittracker.models.place.PlacesController
 import com.crepetete.transittracker.models.place.adapter.viewholder.adapter.PlacesAdapter
 import timber.log.Timber
 
-class ItemFragment : Fragment() {
+class SavedPlacesFragment : Fragment() {
     companion object {
         private const val PLACE_LIST_KEY = "PLACE_LIST_KEY"
     }

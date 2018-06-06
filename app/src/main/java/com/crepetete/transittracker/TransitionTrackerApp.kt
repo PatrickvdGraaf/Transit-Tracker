@@ -14,13 +14,6 @@ class TransitionTrackerApp : Application() {
         } else {
             Timber.plant(CrashReportingTree())
         }
-
-//        val service = Intent(applicationContext, GeofenceService::class.java)
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            startForegroundService(service)
-//        } else {
-//            startService(service)
-//        }
     }
 }
 
